@@ -1,0 +1,11 @@
+[{
+    "name": "Time",
+    "type": "date",
+    "format": "%b-%d-%Y %H:%M:%S:%L"
+}, {
+  "name": "Type",
+  "type": "string"
+},{
+    "name": "Voltage",
+    "type": "number"
+}]

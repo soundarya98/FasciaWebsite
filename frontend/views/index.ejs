@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FASCIA</title>
+
+<link href="/css/stylesheet.css" rel="stylesheet" type="text/css">
+
+<script src="/socket.io/socket.io.js"></script>
+<script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>
+<script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.js"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+
+</head>
+<body>
+
+<div class="header">
+  <h1>FASCIA</h1>
+</div>
+
+<div class="topnav">
+  <a href="#">Researcher</a>
+  <a href="#">User</a>
+</div>
+
+<div class="row">
+  <div class="leftcolumn">
+
+    <div class="card">
+      <h2>Sleep Stage</h2>
+      <div id="sleep-stage"></div>
+    </div>
+
+      <div class="card">
+      <h1>Details</h1>
+          <h2> Features detected in EEG-FPZ-CZ</h2>
+          <div>
+          	<div id="spindles-fpzcz"> </div>
+          </div>
+      </div>
+
+      <div class="card">
+      <h1>Details</h1>
+          <h2> Features detected in EEG-PZ-OZ</h2>
+          <div>
+              <div id="spindles-pzoz"></div>
+          </div>
+      </div>
+
+    <div class="card">
+      <h2>EEG Channels</h2>
+      <div id="EEG"></div>
+    </div>
+
+     <div class="card">
+      <h2>EOG</h2>
+      <div id="EOG"></div>
+    </div>
+
+    <div class="card">
+      <h2>EMG</h2>
+      <div id="EMG"></div>
+    </div>
+
+     <div class="card">
+      <h2>Resp-oro-nasal</h2>
+      <div id="Resp-oro-nasal"></div>
+     </div>
+
+  </div>
+
+  <div class="rightcolumn">
+    <div class="card">
+
+      <h2>Power Spectral Analysis</h2>
+      <h3> EEG-FPZ-CZ </h3>
+      <p>Space for the researcher to make comments</p>
+        <div id="chart"></div>
+
+      <h3> EEG-PZ-OZ </h3>
+      <p>Space for the researcher to make comments</p>
+      <div id="chart-psd-pzoz"></div>
+
+    </div>
+
+    <div class="card">
+      <h2>Experiment</h2>
+      <p>Space for the researcher to make comments</p>
+
+      <form action="/action_page.php">
+      <label for="Experiment_Number">Experiment Number:</label><br>
+      <input type="text" id="Experiment_Number" name="Experiment_Number"><br><br>
+      <label for="extra_comments">Extra Comments</label><br>
+      <textarea name="message" rows="10"></textarea> <br><br>
+      <input type="submit" value="Submit">
+      </form>
+    </div>
+
+    <div class="card">
+      <h3>Researcher experiment comments</h3>
+      <p>Preliminary study on correlation between body temperature and quality of sleep</p>
+    </div>
+  </div>
+</div>
+
+<script> var schema_eeg = <%- JSON.stringify(schema_eeg) %>; </script>
+<script> var schema_signals = <%- JSON.stringify(schema_signals) %>; </script>
+<script src="sleepstagefc.js"></script>
+<script src="signalsfc.js"></script>
+<script src="psd_fpzcz.js"></script>
+<script src="psd_pzoz.js"></script>
+<script src="spindles_fpzcz.js"></script>
+<script src="spindles_pzoz.js"></script>
+
+</body>
+</html>
