@@ -98,75 +98,14 @@ def main():
         json_data_eeg_fpzcz = json_data_eeg_fpzcz.reshape(3000, )
         json_data_eeg_pzoz = json_data_eeg_pzoz.reshape(3000, )
 
-        all_rows = []
-        for i in range(len(json_data_eeg_fpzcz)):
-            current_time = root_time + ':{}:{}0'.format(str(math.floor(i / 100)).zfill(2),
-                                                    str(math.floor(i % 100)).zfill(2))
-            current_time = "{}".format(current_time).replace('\'', '')
-            row = []
-            row.append(current_time)
-            row.append("EEG-FPZ-CZ")
-            row.append(json_data_eeg_fpzcz[i])
-            all_rows.append(row)
-
-            row = []
-            row.append(current_time)
-            row.append("EEG-PZ-OZ")
-            row.append(json_data_eeg_pzoz[i])
-            all_rows.append(row)
-
-        with open('../frontend/data/EEG.json', 'w') as f:
-            f.write(str(all_rows).replace('\'', '"'))
-
-        for index in range(2, 6):
-            json_data_tmp = np.transpose(np.transpose(json_data)[index][:][:])
-            json_data_tmp = json_data_tmp.reshape(3000, )
-
-            all_rows = []
-            for i in range(len(json_data_tmp)):
-                current_time = root_time + ':{}:{}0'.format(str(math.floor(i / 100)).zfill(2),
-                                                        str(math.floor(i % 100)).zfill(2))
-                current_time = "{}".format(current_time).replace('\'', '')
-
-                row = []
-                row.append(current_time)
-                row.append(json_data_tmp[i])
-                all_rows.append(row)
-
-            with open('../frontend/data/' + str(channels[index]) + '.json',
-                      'w') as f:
-                f.write(str(all_rows).replace('\'', '"'))
 
         sf = 100
         # Define window length (4 seconds)
         win = 4 * sf
 
-        psd, freqs = psd_array_multitaper(json_data_eeg_fpzcz, sf, normalization='full', verbose=0)
-
-        all_rows = []
-        for i in range(len(freqs[:301])):
-            row = {}
-            row["Frequencies"] = freqs[i]
-            row["PSD"] = psd[i]
-            all_rows.append(row)
-
-        with open('../frontend/data/PSD-FPZCZ.json', 'w') as f:
-            f.write(str(all_rows).replace('\'', '"'))
-
-        psd, freqs = psd_array_multitaper(json_data_eeg_pzoz, sf, normalization='full', verbose=0)
-
-        all_rows = []
-        for i in range(len(freqs[:301])):
-            row = {}
-            row["Frequencies"] = freqs[i]
-            row["PSD"] = psd[i]
-            all_rows.append(row)
-
-        with open('../frontend/data/PSD-PZOZ.json', 'w') as f:
-            f.write(str(all_rows).replace('\'', '"'))
-
         # Apply the detection using yasa.spindles_detect
         sp = yasa.spindles_detect(json_data_eeg_fpzcz, sf)
+
         sw = sw_detect(json_data_eeg_fpzcz, sf, include=(2, 3), freq_sw=(0.3, 2),
                        dur_neg=(0.3, 1.5), dur_pos=(0.1, 1), amp_neg=(40, 300),
                        amp_pos=(10, 150), amp_ptp=(75, 400), remove_outliers=False,
@@ -207,7 +146,7 @@ def main():
                 row["Slow Waves"] = json_data_eeg_fpzcz[i]
             all_rows.append(row)
 
-        with open('../frontend/data/Spindles-FPZCZ.json', 'w') as f:
+        with open('../frontend/data/EEG-FPZ-CZ.json', 'w') as f:
             f.write(str(all_rows).replace('\'', '"').replace('None', 'null'))
 
 
@@ -254,8 +193,53 @@ def main():
                 row["Slow Waves"] = json_data_eeg_pzoz[i]
             all_rows.append(row)
 
-        with open('../frontend/data/Spindles-PZOZ.json', 'w') as f:
+        with open('../frontend/data/EEG-PZ-OZ.json', 'w') as f:
             f.write(str(all_rows).replace('\'', '"').replace('None', 'null'))
+
+
+        #start
+        for index in range(2, 6):
+            json_data_tmp = np.transpose(np.transpose(json_data)[index][:][:])
+            json_data_tmp = json_data_tmp.reshape(3000, )
+
+            all_rows = []
+            for i in range(len(json_data_tmp)):
+                current_time = root_time + ':{}:{}0'.format(str(math.floor(i / 100)).zfill(2),
+                                                            str(math.floor(i % 100)).zfill(2))
+                current_time = "{}".format(current_time).replace('\'', '')
+                row = {}
+                row["date"] = current_time
+                row[channels[index]] = json_data_tmp[i]
+                all_rows.append(row)
+
+            with open('../frontend/data/'+channels[index]+'.json', 'w') as f:
+                f.write(str(all_rows).replace('\'', '"').replace('None', 'null'))
+
+        #end
+
+        psd, freqs = psd_array_multitaper(json_data_eeg_fpzcz, sf, normalization='full', verbose=0)
+
+        all_rows = []
+        for i in range(len(freqs[:301])):
+            row = {}
+            row["Frequencies"] = freqs[i]
+            row["PSD"] = psd[i]
+            all_rows.append(row)
+
+        with open('../frontend/data/PSD-FPZCZ.json', 'w') as f:
+            f.write(str(all_rows).replace('\'', '"'))
+
+        psd, freqs = psd_array_multitaper(json_data_eeg_pzoz, sf, normalization='full', verbose=0)
+
+        all_rows = []
+        for i in range(len(freqs[:301])):
+            row = {}
+            row["Frequencies"] = freqs[i]
+            row["PSD"] = psd[i]
+            all_rows.append(row)
+
+        with open('../frontend/data/PSD-PZOZ.json', 'w') as f:
+            f.write(str(all_rows).replace('\'', '"'))
 
         print("Sleepstage: ", mapping[sleepstage[0]])
         nodeserv(hyp[int(sleepstage[0])], cn)

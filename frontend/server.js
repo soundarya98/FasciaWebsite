@@ -6,17 +6,11 @@ var fs = require('fs');
 var ejs = require('ejs');
 var express = require('express');
 
-let rawschema_eeg = fs.readFileSync('schema/schema_eeg.json');
-let schema_eeg = JSON.parse(rawschema_eeg);
-
-let rawschema_signals = fs.readFileSync('schema/schema_signals.json');
-let schema_signals = JSON.parse(rawschema_signals);
-
 app.set('view engine', 'ejs');
 app.use(express.static(__dirname + '/views'));
 app.get("/", function(req, res)
 {
-    res.render("index.ejs", {schema_eeg:schema_eeg, schema_signals:schema_signals})
+    res.render("index.ejs")
 });
 
 io.on('connection', (socket) =>
@@ -32,8 +26,11 @@ io.on('connection', (socket) =>
         strData = parseInt(data.toString());
         console.log(parseInt(strData));
 
-        let eeg = fs.readFileSync('data/EEG.json');
-        eeg = JSON.parse(eeg);
+        let raweeg_fpzcz = fs.readFileSync('data/EEG-FPZ-CZ.json');
+        let eeg_fpzcz = JSON.parse(raweeg_fpzcz);
+
+        let raweeg_pzoz = fs.readFileSync('data/EEG-PZ-OZ.json');
+        let eeg_pzoz = JSON.parse(raweeg_pzoz);
 
         let eog = fs.readFileSync('data/EOG.json');
         eog = JSON.parse(eog);
@@ -47,28 +44,21 @@ io.on('connection', (socket) =>
         let temp = fs.readFileSync('data/Temp.json');
         temp = JSON.parse(temp);
 
-        let rawpsd = fs.readFileSync('data/PSD-FPZCZ.json');
-        let psd = JSON.parse(rawpsd);
+        let rawpsd_fpzcz = fs.readFileSync('data/PSD-FPZCZ.json');
+        let psd_fpzcz = JSON.parse(rawpsd_fpzcz);
 
         let rawpsd_pzoz = fs.readFileSync('data/PSD-PZOZ.json');
         let psd_pzoz = JSON.parse(rawpsd_pzoz);
 
-        let rawspindles_fpzcz = fs.readFileSync('data/Spindles-FPZCZ.json');
-        let spindles_fpzcz = JSON.parse(rawspindles_fpzcz);
-
-        let rawspindles_pzoz = fs.readFileSync('data/Spindles-PZOZ.json');
-        let spindles_pzoz = JSON.parse(rawspindles_pzoz);
-
         socket.emit('SleepStage',
             {stage: strData,
-                eeg:eeg,
+                eeg_fpzcz: eeg_fpzcz,
+                eeg_pzoz: eeg_pzoz,
                 eog:eog,
                 resp:resp,
                 emg:emg,
-                psd:psd,
+                psd_fpzcz:psd_fpzcz,
                 psd_pzoz: psd_pzoz,
-                spindles_fpzcz: spindles_fpzcz,
-                spindles_pzoz: spindles_pzoz,
                 temp:temp
             });
     });
