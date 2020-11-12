@@ -1,11 +1,13 @@
-function redraw_eeg(data, channel) {
+function redraw_eeg(data, channel, clientWidth, clientHeight) {
     d3.select("#" + "svg-" + channel).remove();
     var chartDiv = document.getElementById(channel);
     var svg = d3.select(chartDiv).append("svg").attr("id", "svg-" + channel);
 
     var margin = {top: 10, right: 0, bottom: 30, left: 20};
-    var width = chartDiv.clientWidth - margin.left - margin.right;
-    var height = chartDiv.clientHeight - margin.bottom;
+    // var width = chartDiv.clientWidth - margin.left - margin.right;
+    // var height = chartDiv.clientHeight - margin.bottom;
+    var width = clientWidth - margin.left - margin.right;
+    var height = clientHeight - margin.bottom;
 
     svg.attr("width", width)
         .attr("height", height);
@@ -40,7 +42,15 @@ function redraw_eeg(data, channel) {
         d.date = parseTime(d.date);
     });
 
-    var keys_ = ["EEG", "Spindle", "Slow Waves"];
+    var keys_ = null;
+    if(channel == 'eeg-fpzcz'){
+         keys_ =   ["EEG_FPZ_CZ", "EEG_FPZ_CZ_Spindle", "EEG_FPZ_CZ_Slow Waves"];
+    }
+
+    else{
+        keys_ =   ["EEG_PZ_OZ", "EEG_PZ_OZ_Spindle", "EEG_PZ_OZ_Slow Waves"];
+    }
+
     var rows = keys_.map(function (id) {
         return {
             id: id,
@@ -134,14 +144,16 @@ function redraw_eeg(data, channel) {
         .style("alignment-baseline", "middle")
 };
 
-function redraw_signal(data, channel) {
+function redraw_signal(data, channel, clientWidth, clientHeight) {
     d3.select("#" + "svg-" + channel).remove();
     var chartDiv = document.getElementById(channel);
     var svg = d3.select(chartDiv).append("svg").attr("id", "svg-" + channel);
 
     var margin = {top: 10, right: 0, bottom: 30, left: 20};
-    var width = chartDiv.clientWidth - margin.left - margin.right;
-    var height = chartDiv.clientHeight - margin.bottom;
+    // var width = chartDiv.clientWidth - margin.left - margin.right;
+    // var height = chartDiv.clientHeight - margin.bottom;
+    var width = clientWidth - margin.left - margin.right;
+    var height = clientHeight - margin.bottom - margin.top;
 
     svg.attr("width", width)
         .attr("height", height);

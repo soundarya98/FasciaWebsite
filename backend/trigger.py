@@ -134,16 +134,16 @@ def main():
             current_time = "{}".format(current_time).replace('\'', '')
             row = {}
             row["date"] = current_time
-            row["EEG"] = json_data_eeg_fpzcz[i]
+            row["EEG_FPZ_CZ"] = json_data_eeg_fpzcz[i]
             if (np.isnan(spindles_highlight[i])):
-                row["Spindle"] = None
+                row["EEG_FPZ_CZ_Spindle"] = None
             else:
-                row["Spindle"] = json_data_eeg_fpzcz[i]
+                row["EEG_FPZ_CZ_Spindle"] = json_data_eeg_fpzcz[i]
 
             if (np.isnan(sw_highlight[i])):
-                row["Slow Waves"] = None
+                row["EEG_FPZ_CZ_Slow Waves"] = None
             else:
-                row["Slow Waves"] = json_data_eeg_fpzcz[i]
+                row["EEG_FPZ_CZ_Slow Waves"] = json_data_eeg_fpzcz[i]
             all_rows.append(row)
 
         with open('../frontend/data/EEG-FPZ-CZ.json', 'w') as f:
@@ -181,16 +181,16 @@ def main():
             current_time = "{}".format(current_time).replace('\'', '')
             row = {}
             row["date"] = current_time
-            row["EEG"] = json_data_eeg_pzoz[i]
+            row["EEG_PZ_OZ"] = json_data_eeg_pzoz[i]
             if (np.isnan(spindles_highlight[i])):
-                row["Spindle"] = None
+                row["EEG_PZ_OZ_Spindle"] = None
             else:
-                row["Spindle"] = json_data_eeg_pzoz[i]
+                row["EEG_PZ_OZ_Spindle"] = json_data_eeg_pzoz[i]
 
             if (np.isnan(sw_highlight[i])):
-                row["Slow Waves"] = None
+                row["EEG_PZ_OZ_Slow Waves"] = None
             else:
-                row["Slow Waves"] = json_data_eeg_pzoz[i]
+                row["EEG_PZ_OZ_Slow Waves"] = json_data_eeg_pzoz[i]
             all_rows.append(row)
 
         with open('../frontend/data/EEG-PZ-OZ.json', 'w') as f:
@@ -240,6 +240,12 @@ def main():
 
         with open('../frontend/data/PSD-PZOZ.json', 'w') as f:
             f.write(str(all_rows).replace('\'', '"'))
+
+        count_json = {}
+        count_json["data"]=count
+
+        with open('../frontend/data/count.json', 'w') as f:
+            f.write(str(count_json).replace('\'', '"'))
 
         print("Sleepstage: ", mapping[sleepstage[0]])
         nodeserv(hyp[int(sleepstage[0])], cn)

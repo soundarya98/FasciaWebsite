@@ -3,6 +3,7 @@ var app = require('express')();
 var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var fs = require('fs');
+var ws = fs.createWriteStream("exported_data.csv");
 var ejs = require('ejs');
 var express = require('express');
 var MongoClient = require('mongodb').MongoClient;
@@ -13,7 +14,6 @@ var bodyParser = require('body-parser');
 var LocalStrategy = require('passport-local');
 var passportLocalMongoose = require('passport-local-mongoose');
 var User = require("./models/user");
-// User.collection.drop();
 
 mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
@@ -90,7 +90,7 @@ app.get("/login", function (req, res) {
 app.post("/login", passport.authenticate("local", {
     failureRedirect: "/login"
 }), function (req, res) {
-    res.render('index.ejs');
+    res.render('index.ejs', { username: req.user.username });
 });
 
 //Handling user logout
@@ -112,7 +112,6 @@ io.on('connection', (socket) =>
         console.log('Disconnected');
       });
 
-      var count = 0;
     client.on('data', (data) =>
     {
         strData = parseInt(data.toString());
@@ -143,7 +142,8 @@ io.on('connection', (socket) =>
         let psd_pzoz = JSON.parse(rawpsd_pzoz);
 
         socket.emit('SleepStage',
-            {stage: strData,
+            {
+                stage: strData,
                 eeg_fpzcz: eeg_fpzcz,
                 eeg_pzoz: eeg_pzoz,
                 eog:eog,
@@ -156,28 +156,81 @@ io.on('connection', (socket) =>
 
         MongoClient.connect(url, function(err, db) {
           if (err) throw err;
-          var dbo = db.db("mydb");
+          var dbo = db.db("FASCIA");
 
-          var insert = {_id: count, data:eeg_fpzcz};
+          let raw_count = fs.readFileSync('data/count.json');
+          let  count = JSON.parse(raw_count);
+          count = count.data;
+          console.log("count is", count);
 
-          let coll = dbo.collection('EEG-FPZ-CZ');
-            coll.estimatedDocumentCount().then((countincoll) => {
-                console.log("countincil is", countincoll);
-                console.log("count is", count);
+          var insert = {_id: count, EEG_FPZ_CZ:eeg_fpzcz, EEG_PZ_OZ:eeg_pzoz, EOG:eog, Resp_Oro_Nasal:resp, EMG:emg, Temp:temp};
 
-                coll.insert(insert, function (err, res) {
-                  if (err) {
-                      console.log("Updating");
-                  }
-                  else {
-                      console.log("Number of epochs inserted: " + res.insertedCount);
-                      db.close();
-                  }
-              });
+          let coll = dbo.collection('UserData');
 
+            coll.insert(insert, function (err, res) {
+              if (err) {
+                  console.log("Updating");
+              }
+              else {
+                  console.log("Number of epochs inserted: " + res.insertedCount);
+                  db.close();
+              }
+          });
+        });
+    });
+
+    socket.on('Updated', (data) =>
+    {
+        console.log("here");
+        let raweeg_fpzcz = fs.readFileSync('data/EEG-FPZ-CZ.json');
+        let eeg_fpzcz = JSON.parse(raweeg_fpzcz);
+
+        let raweeg_pzoz = fs.readFileSync('data/EEG-PZ-OZ.json');
+        let eeg_pzoz = JSON.parse(raweeg_pzoz);
+
+        let eog = fs.readFileSync('data/EOG.json');
+        eog = JSON.parse(eog);
+
+        let resp = fs.readFileSync('data/Resp-Oro-Nasal.json');
+        resp = JSON.parse(resp);
+
+        let emg = fs.readFileSync('data/EMG.json');
+        emg = JSON.parse(emg);
+
+        let temp = fs.readFileSync('data/Temp.json');
+        temp = JSON.parse(temp);
+
+        let rawpsd_fpzcz = fs.readFileSync('data/PSD-FPZCZ.json');
+        let psd_fpzcz = JSON.parse(rawpsd_fpzcz);
+
+        let rawpsd_pzoz = fs.readFileSync('data/PSD-PZOZ.json');
+        let psd_pzoz = JSON.parse(rawpsd_pzoz);
+
+        socket.emit('SleepStage',
+            {
+                eeg_fpzcz: eeg_fpzcz,
+                eeg_pzoz: eeg_pzoz,
+                eog:eog,
+                resp:resp,
+                emg:emg,
+                psd_fpzcz:psd_fpzcz,
+                psd_pzoz: psd_pzoz,
+                temp:temp
+            });
+    });
+
+    socket.on('Download', (data) => {
+        MongoClient.connect(url, function(err, db) {
+            if (err) throw err;
+
+            var dbo = db.db("FASCIA");
+            dbo.collection("UserData").find({}).toArray(function (err, result) {
+                if (err) throw err;
+                // console.log(result);
+                socket.emit('DownloadResponse', {result});
                 db.close();
             });
-          count = count + 1;
+
         });
     });
 });

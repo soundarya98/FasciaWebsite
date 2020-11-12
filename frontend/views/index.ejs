@@ -13,6 +13,90 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.js"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script>
+    const socket = io();
+function doSomething(){
+    socket.emit("Download", "download");
+    // var text = '{data: nice}';
+    socket.on('DownloadResponse', function (data) {
+        console.log('here');
+        var data_json = data.result;
+
+
+        // data_json.forEach(function(e){
+        //     delete e["_id"];
+        // });
+
+        function jsonConcat(o1, o2) {
+           for (var key in o2) {
+            o1[key] = o2[key];
+            }
+           return o1;
+        }
+
+
+    final = [];
+    for (let i = 0; i < data_json.length; i++)
+      for (let j = 0; j < data_json[i].EEG_FPZ_CZ.length; j++)
+      {
+          console.log(i);
+        output = {}
+        output = jsonConcat(output, data_json[i].EEG_FPZ_CZ[j]);
+        output = jsonConcat(output, data_json[i].EEG_PZ_OZ[j]);
+        output = jsonConcat(output, data_json[i].EOG[j]);
+        output = jsonConcat(output, data_json[i].EMG[j]);
+        output = jsonConcat(output, data_json[i].Resp_Oro_Nasal[j]);
+        output = jsonConcat(output, data_json[i].Temp[j]);
+
+        final.push(output);
+      }
+
+      console.log(final);
+
+      var json = final
+      console.log(json)
+      var fields = Object.keys(json[0])
+      var replacer = function(key, value) { return value === null ? '' : value }
+      var csv = json.map(function(row){
+        return fields.map(function(fieldName){
+          return JSON.stringify(row[fieldName], replacer)
+        }).join(',')
+      })
+        csv.unshift(fields.join(',')) // add header column
+        csv = csv.join('\r\n');
+        console.log(csv)
+
+        var contentType = 'text/csv';
+        var data_download = new Blob([csv], {type: contentType});
+        // data_download = new Blob([data_download], {type: "application/json"});
+        var url = window.URL.createObjectURL(data_download);
+        document.getElementById('download_link').href = url;
+    });
+}
+
+$(document).ready(function(){
+    $("select").change(function(){
+        $(this).find("option:selected").each(function(){
+            var optionValue = $(this).attr("value");
+            if(optionValue){
+                $(".graphbox").not("." + optionValue).hide();
+                $("." + optionValue).show();
+                socket.emit("Updated", "data");
+            } else{
+                $(".graphbox").hide();
+            }
+        });
+    }).change();
+});
+
+$(document).ready(function(){
+    $("button").click(function(){
+        $("a")[0].click();
+    });
+});
+</script>
+
 </head>
 <body>
 
@@ -21,6 +105,7 @@
 </div>
 
 <div class="topnav">
+  <a href="#">Welcome <%= username %>!</a>
   <a href="#">Researcher</a>
   <a href="#">User</a>
 </div>
@@ -33,38 +118,79 @@
       <div id="sleep-stage"></div>
     </div>
 
-      <div class="card">
-      <h1>Details</h1>
-          <h2> Features detected in EEG-FPZ-CZ</h2>
-          <div>
-          	<div id="eeg-fpzcz"> </div>
-          </div>
-      </div>
-
-      <div class="card">
-      <h1>Details</h1>
-          <h2> Features detected in EEG-PZ-OZ</h2>
-          <div>
-              <div id="eeg-pzoz"></div>
-          </div>
-      </div>
-
-     <div class="card">
-      <h2>EOG</h2>
-          <div>
-          	<div id="EOG"> </div>
-          </div>
-     </div>
-
-    <div class="card">
-      <h2>EMG</h2>
-      <div id="EMG"></div>
+    <div class = "card">
+        <h1> Select Signal to Display in the space below </h1>
+        <select>
+            <option>Choose Signal to Display</option>
+            <option value="EEG-FPZ-CZ">EEG-FPZ-CZ</option>
+            <option value="EEG-PZ-OZ">EEG-PZ-OZ</option>
+            <option value="EOG">EOG</option>
+            <option value="EMG">EMG</option>
+            <option value="Resp-Oro-Nasal">Resp-Oro-Nasal</option>
+            <option value="Temp">Temp</option>
+        </select>
     </div>
 
-     <div class="card">
-      <h2>Resp-oro-nasal</h2>
-      <div id="Resp-Oro-Nasal"></div>
-     </div>
+      <div class="EEG-FPZ-CZ graphbox">
+          <div class = "card">
+          <h1>Details</h1>
+              <h2> Features detected in EEG-FPZ-CZ</h2>
+              <div>
+                <div id="eeg-fpzcz"> </div>
+              </div>
+          </div>
+      </div>
+
+    <div class="EEG-PZ-OZ graphbox">
+          <div class = "card">
+          <h1>Details</h1>
+              <h2> Features detected in EEG-PZ-OZ</h2>
+              <div>
+                <div id="eeg-pzoz"> </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="EOG graphbox">
+          <div class = "card">
+          <h1>EOG</h1>
+              <div>
+                <div id="EOG"> </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="EMG graphbox">
+          <div class = "card">
+          <h1>EMG</h1>
+              <div>
+                <div id="EMG"> </div>
+              </div>
+          </div>
+      </div>
+
+    <div class="Resp-Oro-Nasal graphbox">
+          <div class = "card">
+          <h1>EMG</h1>
+              <div>
+                <div id="Resp-Oro-Nasal"> </div>
+              </div>
+          </div>
+      </div>
+
+    <div class="Temp graphbox">
+          <div class = "card">
+          <h1>Temp</h1>
+              <div>
+                <div id="Temp"> </div>
+              </div>
+          </div>
+    </div>
+
+      <div class="card">
+          <h1>Click on the button below to download the data logged so far</h1>
+          <a id="download_link" onclick="doSomething()" download="Exported_data.csv" href=””> Download as CSV </a>
+      </div>
 
   </div>
 
@@ -105,13 +231,16 @@
 <script src="signals.js"></script>
 <script src="psd.js"></script>
 <script>
-    const socket = io();
+    var chartDiv = document.getElementById('none');
+    var clientWidth = 1200;
+    var clientHeight = 400;
     socket.on('SleepStage', function (fulldata) {
-        redraw_eeg(fulldata.eeg_fpzcz, 'eeg-fpzcz');
-        redraw_eeg(fulldata.eeg_pzoz, 'eeg-pzoz');
-        redraw_signal(fulldata.eog, 'EOG');
-        redraw_signal(fulldata.emg, 'EMG');
-        redraw_signal(fulldata.resp, 'Resp-Oro-Nasal');
+        redraw_eeg(fulldata.eeg_fpzcz, 'eeg-fpzcz', clientWidth, clientHeight);
+        redraw_eeg(fulldata.eeg_pzoz, 'eeg-pzoz', clientWidth, clientHeight);
+        redraw_signal(fulldata.eog, 'EOG', clientWidth, clientHeight);
+        redraw_signal(fulldata.emg, 'EMG', clientWidth, clientHeight);
+        redraw_signal(fulldata.resp, 'Resp-Oro-Nasal', clientWidth, clientHeight);
+        redraw_signal(fulldata.temp, 'Temp', clientWidth, clientHeight);
         redraw_psd(fulldata.psd_fpzcz, 'PSD-FPZCZ');
         redraw_psd(fulldata.psd_pzoz, 'PSD-PZOZ');
     });
