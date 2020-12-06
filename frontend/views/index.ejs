@@ -16,17 +16,11 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 <script>
     const socket = io();
-function doSomething(){
+    function getCSV(){
     socket.emit("Download", "download");
-    // var text = '{data: nice}';
+
     socket.on('DownloadResponse', function (data) {
-        console.log('here');
         var data_json = data.result;
-
-
-        // data_json.forEach(function(e){
-        //     delete e["_id"];
-        // });
 
         function jsonConcat(o1, o2) {
            for (var key in o2) {
@@ -34,7 +28,6 @@ function doSomething(){
             }
            return o1;
         }
-
 
     final = [];
     for (let i = 0; i < data_json.length; i++)
@@ -52,7 +45,6 @@ function doSomething(){
         final.push(output);
       }
 
-      console.log(final);
 
       var json = final
       console.log(json)
@@ -69,7 +61,6 @@ function doSomething(){
 
         var contentType = 'text/csv';
         var data_download = new Blob([csv], {type: contentType});
-        // data_download = new Blob([data_download], {type: "application/json"});
         var url = window.URL.createObjectURL(data_download);
         document.getElementById('download_link').href = url;
     });
@@ -141,6 +132,16 @@ $(document).ready(function(){
           </div>
       </div>
 
+      <div class="EEG-FPZ-CZ gradbox">
+          <div class = "card">
+          <h1>Saliency Maps in EEG-FPZ-CZ</h1>
+<!--              <h2> Saliency Maps in EEG-FPZ-CZ</h2>-->
+              <div>
+                <div id="eeg-fpzcz-grad"> </div>
+              </div>
+          </div>
+      </div>
+
     <div class="EEG-PZ-OZ graphbox">
           <div class = "card">
           <h1>Details</h1>
@@ -188,13 +189,22 @@ $(document).ready(function(){
     </div>
 
       <div class="card">
-          <h1>Click on the button below to download the data logged so far</h1>
-          <a id="download_link" onclick="doSomething()" download="Exported_data.csv" href=””> Download as CSV </a>
+          <h1>Spectrogram</h1>
+          <img id="spectrogram" alt="Spectrogram" style="width: 95%">
       </div>
 
+      <div class="card">
+          <h1>Click on the button below to download the data logged so far</h1>
+          <a id="download_link" onclick="getCSV()" download="Exported_data.csv" href=””> Download as CSV </a>
+      </div>
   </div>
 
   <div class="rightcolumn">
+      <div class="card">
+      <h2>Sleep Stage Probabilities</h2>
+          <div id="SleepProb"></div>
+      </div>
+
     <div class="card">
 
       <h2>Power Spectral Analysis</h2>
@@ -228,6 +238,7 @@ $(document).ready(function(){
   </div>
 </div>
 <script src="sleepstagefc.js"></script>
+<script src="sleepprob.js"></script>
 <script src="signals.js"></script>
 <script src="psd.js"></script>
 <script>
@@ -235,14 +246,18 @@ $(document).ready(function(){
     var clientWidth = 1200;
     var clientHeight = 400;
     socket.on('SleepStage', function (fulldata) {
+        redraw_sleepprob(fulldata.sleepprob);
         redraw_eeg(fulldata.eeg_fpzcz, 'eeg-fpzcz', clientWidth, clientHeight);
         redraw_eeg(fulldata.eeg_pzoz, 'eeg-pzoz', clientWidth, clientHeight);
+        redraw_grad(fulldata.eeg_fpzcz_grad, clientWidth, clientHeight);
         redraw_signal(fulldata.eog, 'EOG', clientWidth, clientHeight);
         redraw_signal(fulldata.emg, 'EMG', clientWidth, clientHeight);
         redraw_signal(fulldata.resp, 'Resp-Oro-Nasal', clientWidth, clientHeight);
         redraw_signal(fulldata.temp, 'Temp', clientWidth, clientHeight);
         redraw_psd(fulldata.psd_fpzcz, 'PSD-FPZCZ');
         redraw_psd(fulldata.psd_pzoz, 'PSD-PZOZ');
+        d = new Date();
+        $("#spectrogram").attr("src", "eeg_fpzcz_specgram.png?"+d.getTime());
     });
 </script>
 </body>

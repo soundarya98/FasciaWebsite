@@ -1,8 +1,0 @@
-[{
-    "name": "Time",
-    "type": "date",
-    "format": "%b-%d-%Y %H:%M:%S:%L"
-}, {
-    "name": "Voltage",
-    "type": "number"
-}]
