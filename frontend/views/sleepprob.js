@@ -16,6 +16,9 @@ function redraw_sleepprob(data, channel, clientWidth, clientHeight) {
   var y = d3.scaleLinear()
       .range([height, 0]);
 
+  // var colorScale = d3.scale.category10();
+  var colorScale =  d3.scaleOrdinal(["#403F4C", "#E84855", "#F9DC5C", "#3185FC", "#EFBCD5"])
+
 // append the svg object to the body of the page
 // append a 'group' element to 'svg'
 // moves the 'group' element to the top left margin
@@ -30,21 +33,27 @@ function redraw_sleepprob(data, channel, clientWidth, clientHeight) {
       .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
-    console.log(data);
+    // console.log(data);
 
   // Scale the range of the data in the domains
   x.domain(data.map(function (d) {
     return d.sleepstage;
   }));
-  y.domain([0, d3.max(data, function (d) {
-    return d.value;
-  })]);
+  y.domain([0, 1]);
+  //   y.domain([0, d3.max(data, function (d) {
+  //   return d.value;
+  // })]);
+    colorScale.domain(data.map(function (d){ return d.sleepstage; }));
+
+  // var colours = d3.scaleOrdinal(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd"]);
+  // console.log(colours);
 
   // append the rectangles for the bar chart
   svg.selectAll(".bar")
       .data(data)
       .enter().append("rect")
-      .attr("class", "bar")
+      .attr("fill", function (d){ return colorScale(d.sleepstage); })
+      // .attr("class", "bar")
       .attr("x", function (d) {
         return x(d.sleepstage);
       })

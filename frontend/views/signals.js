@@ -109,6 +109,8 @@ function redraw_eeg(data, channel, clientWidth, clientHeight) {
         .enter().append("g")
         .attr("class", "row");
 
+    var colours = d3.scaleOrdinal(d3.schemeCategory10);
+
     // Create a <path> element inside of each row <g>
     row.append("path")
         .attr("class", "line")
@@ -117,7 +119,8 @@ function redraw_eeg(data, channel, clientWidth, clientHeight) {
         })
         .style("stroke", function (d) {
             return z(d.id);
-        });
+        })
+        .style("color", colours(3));
 
     var color = d3.scale.ordinal()
       .domain(["EEG", "Spindle", "Slow Waves"])
@@ -130,6 +133,7 @@ function redraw_eeg(data, channel, clientWidth, clientHeight) {
         .attr("cx", function(d,i){ return 0 + i*65})
         .attr("cy", -20)
         .attr("r", 7)
+        // .style("fill", color2(3));
         .style("fill", function(d){ return color(d)});
 
     row.selectAll("mylabels")
@@ -307,9 +311,12 @@ function redraw_grad(data, clientWidth, clientHeight) {
     // Scale Y - linear scale
     // Scale Z - color categorical scale
     var x = d3.scaleTime().range([margin.left, width - margin.right]),
-        y = d3.scaleLinear().range([height - margin.bottom, margin.top]),
-        z = d3.scaleOrdinal(d3.schemeCategory10);
+        y = d3.scaleLinear().range([height - margin.bottom, margin.top]);
+        // z = d3.scaleOrdinal(d3.schemeCategory10);
 
+    var z = d3.scaleOrdinal(["#1f77b4", "#DE0098", "#2ca02c"]);
+
+    // console.log(d3.schemeCategory10);
     // D3 Line generator
     var line = d3.line()
         .x(function (d) {
@@ -362,6 +369,8 @@ function redraw_grad(data, clientWidth, clientHeight) {
         return c.id;
     }));
 
+    // console.log(z)
+
     // Create X Axis
     g.append("g")
         .attr("class", "axis axis--x")
@@ -378,7 +387,7 @@ function redraw_grad(data, clientWidth, clientHeight) {
         .attr("transform", "rotate(-90)")
         .attr("y", 6)
         .attr("dy", "0.71em")
-        .attr("fill", "#000")
+        .attr("fill", "#000000")
         .text("Voltage, mV");
 
     // Create a <g> element for each row
@@ -393,9 +402,12 @@ function redraw_grad(data, clientWidth, clientHeight) {
         .attr("d", function (d) {
             return line(d.values);
         })
+        // .style("color", z(3))
         .style("stroke", function (d) {
             return z(d.id);
-        });
+            // return '#800000';
+        })
+        // .style("fill", z(3));
 
     var color = d3.scale.ordinal()
       .domain(["EEG", "EEG-Grad"])
@@ -408,6 +420,7 @@ function redraw_grad(data, clientWidth, clientHeight) {
         .attr("cx", function(d,i){ return 0 + i*65})
         .attr("cy", -20)
         .attr("r", 7)
+        .style("color", z(4))
         .style("fill", function(d){ return color(d)});
 
     row.selectAll("mylabels")

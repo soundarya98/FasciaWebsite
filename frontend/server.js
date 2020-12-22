@@ -110,6 +110,9 @@ io.on('connection', (socket) =>
         strData = parseInt(data.toString());
         console.log(parseInt(strData));
 
+        let rawsleepstage = fs.readFileSync('data/sleepstage.json');
+        let sleepstage = JSON.parse(rawsleepstage);
+
         let rawsleepprob = fs.readFileSync('data/SleepProb.json');
         let sleepprob = JSON.parse(rawsleepprob);
 
@@ -143,7 +146,7 @@ io.on('connection', (socket) =>
         socket.emit('SleepStage',
             {
                 sleepprob: sleepprob,
-                stage: strData,
+                stage: sleepstage,
                 eeg_fpzcz: eeg_fpzcz,
                 eeg_pzoz: eeg_pzoz,
                 eeg_fpzcz_grad: eeg_fpzcz_grad,
@@ -182,10 +185,13 @@ io.on('connection', (socket) =>
 
     socket.on('Updated', (data) =>
     {
+        let rawsleepstage = fs.readFileSync('data/sleepstage.json');
+        let sleepstage = JSON.parse(rawsleepstage);
+
         let rawsleepprob = fs.readFileSync('data/SleepProb.json');
         let sleepprob = JSON.parse(rawsleepprob);
 
-        console.log(sleepprob);
+        // console.log(sleepprob);
 
         let raweeg_fpzcz = fs.readFileSync('data/EEG-FPZ-CZ.json');
         let eeg_fpzcz = JSON.parse(raweeg_fpzcz);
@@ -217,6 +223,7 @@ io.on('connection', (socket) =>
         socket.emit('SleepStage',
             {
                 sleepprob: sleepprob,
+                stage: sleepstage,
                 eeg_fpzcz: eeg_fpzcz,
                 eeg_pzoz: eeg_pzoz,
                 eeg_fpzcz_grad: eeg_fpzcz_grad,

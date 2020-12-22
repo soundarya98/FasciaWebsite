@@ -54,7 +54,7 @@ def nodeserv(transfdata, cn):
     cn.send(bytes(tfdatajson, encoding='utf8'))
 
 def main():
-    count = 600
+    count = 16
     sn = socket.socket()
     hostn = 'localhost'
     portn = 14564
@@ -96,7 +96,14 @@ def main():
         print(sleepstage)
 
         json_data = data[count, :, :]
+
+        from datetime import datetime
+        now = datetime.now()
+        print("now =", now)
+
         root_time = strftime("%b-%d-%Y %H:%M")
+
+        just_time = strftime("%H:%M:%S")
 
         json_data_eeg_fpzcz = np.transpose(np.transpose(json_data)[0][:][:])
         json_data_eeg_pzoz = np.transpose(np.transpose(json_data)[1][:][:])
@@ -215,7 +222,7 @@ def main():
             row = {}
             row["date"] = current_time
             row["EEG_FPZ_CZ"] = json_data_eeg_fpzcz[i]
-            if (grads[0, i]<0.1):
+            if (grads[0, i]<0.15):
                 row["EEG_FPZ_CZ_Grad"] = None
             else:
                 row["EEG_FPZ_CZ_Grad"] = json_data_eeg_fpzcz[i]
@@ -245,7 +252,7 @@ def main():
         psd, freqs = psd_array_multitaper(json_data_eeg_fpzcz, sf, normalization='full', verbose=0)
 
         all_rows = []
-        for i in range(len(freqs[:301])):
+        for i in range(len(freqs[:1801])): #Upto 60Hz (Elaborate)
             row = {}
             row["Frequencies"] = freqs[i]
             row["PSD"] = psd[i]
@@ -257,7 +264,7 @@ def main():
         psd, freqs = psd_array_multitaper(json_data_eeg_pzoz, sf, normalization='full', verbose=0)
 
         all_rows = []
-        for i in range(len(freqs[:301])):
+        for i in range(len(freqs[:1801])):
             row = {}
             row["Frequencies"] = freqs[i]
             row["PSD"] = psd[i]
@@ -273,6 +280,14 @@ def main():
             f.write(str(count_json).replace('\'', '"'))
 
         print("Sleepstage: ", mapping[sleepstage])
+
+        row = {}
+        row["time"] = just_time
+        row["stage"] = sleepstage + 1
+        print(row)
+        with open('../frontend/data/sleepstage.json', 'w') as f:
+            f.write(str(row).replace('\'', '"'))
+
         # nodeserv(hyp[int(sleepstage)], cn)
         nodeserv(int(sleepstage), cn)
         count += 1

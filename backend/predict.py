@@ -33,16 +33,18 @@ class predict_single_epoch:
             with self.session.as_default():
                 indices = np.r_[0:6]
                 X = np.transpose(np.transpose(self.test_dict[record]["x"])[indices][:][:])
+#                 X = self.test_dict[record]["x"]
                 X = np.expand_dims(X, 0)
                 X = np.expand_dims(X, 0)
                 X = rescale_array(X)
+                # print(X.shape)
                 Y_pred = self.model.predict(X)
 
                 all_rows = []
-                print(Y_pred.shape)
+                # print(Y_pred.shape)
                 for i in range(len(Y_pred[0][0])):
                     row = {}
-                    row["sleepstage"] = i
+                    row["sleepstage"] = mapping[i]
                     row["value"] = Y_pred[0][0][i]
                     all_rows.append(row)
 
@@ -67,7 +69,7 @@ class predict_single_epoch:
                     self.test_dict[test]["y"] = data["y"]
                     self.test_dict[test]["x"] = data["x"]
                     self.model = get_model_lstm()
-                    file_path = "models/lstm-6.ckpt"
+                    file_path = "models/lstm.ckpt"
                     self.model.load_weights(file_path)
                     logging.info("Neural Network loaded: ")
                     return True

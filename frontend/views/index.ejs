@@ -6,8 +6,8 @@
 <link href="/css/stylesheet.css" rel="stylesheet" type="text/css">
 
 <script src="/socket.io/socket.io.js"></script>
-<script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>
-<script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js"></script>
+<!--<script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>-->
+<!--<script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js"></script>-->
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.js"></script>
@@ -33,7 +33,7 @@
     for (let i = 0; i < data_json.length; i++)
       for (let j = 0; j < data_json[i].EEG_FPZ_CZ.length; j++)
       {
-          console.log(i);
+          // console.log(i);
         output = {}
         output = jsonConcat(output, data_json[i].EEG_FPZ_CZ[j]);
         output = jsonConcat(output, data_json[i].EEG_PZ_OZ[j]);
@@ -47,7 +47,7 @@
 
 
       var json = final
-      console.log(json)
+      // console.log(json)
       var fields = Object.keys(json[0])
       var replacer = function(key, value) { return value === null ? '' : value }
       var csv = json.map(function(row){
@@ -57,7 +57,7 @@
       })
         csv.unshift(fields.join(',')) // add header column
         csv = csv.join('\r\n');
-        console.log(csv)
+        // console.log(csv)
 
         var contentType = 'text/csv';
         var data_download = new Blob([csv], {type: contentType});
@@ -67,7 +67,7 @@
 }
 
 $(document).ready(function(){
-    $("select").change(function(){
+    $("#Signals").change(function(){
         $(this).find("option:selected").each(function(){
             var optionValue = $(this).attr("value");
             if(optionValue){
@@ -86,14 +86,30 @@ $(document).ready(function(){
         $("a")[0].click();
     });
 });
+
+$(document).ready(function(){
+    $("#Grad").change(function(){
+        $(this).find("option:selected").each(function(){
+            var optionValue = $(this).attr("value");
+            if(optionValue){
+                $(".gradbox").not("." + optionValue).hide();
+                $("." + optionValue).show();
+                socket.emit("Updated", "data");
+            } else{
+                $(".gradbox").hide();
+            }
+        });
+    }).change();
+});
+
 </script>
 
 </head>
 <body>
 
-<div class="header">
-  <h1>FASCIA</h1>
-</div>
+<!--<div class="header">-->
+<!--  <h1>FASCIA</h1>-->
+<!--</div>-->
 
 <div class="topnav">
   <a href="#">Welcome <%= username %>!</a>
@@ -106,12 +122,12 @@ $(document).ready(function(){
 
     <div class="card">
       <h2>Sleep Stage</h2>
-      <div id="sleep-stage"></div>
+      <div id="chart"></div>
     </div>
 
     <div class = "card">
         <h1> Select Signal to Display in the space below </h1>
-        <select>
+        <select id="Signals">
             <option>Choose Signal to Display</option>
             <option value="EEG-FPZ-CZ">EEG-FPZ-CZ</option>
             <option value="EEG-PZ-OZ">EEG-PZ-OZ</option>
@@ -132,17 +148,7 @@ $(document).ready(function(){
           </div>
       </div>
 
-      <div class="EEG-FPZ-CZ gradbox">
-          <div class = "card">
-          <h1>Saliency Maps in EEG-FPZ-CZ</h1>
-<!--              <h2> Saliency Maps in EEG-FPZ-CZ</h2>-->
-              <div>
-                <div id="eeg-fpzcz-grad"> </div>
-              </div>
-          </div>
-      </div>
-
-    <div class="EEG-PZ-OZ graphbox">
+         <div class="EEG-PZ-OZ graphbox">
           <div class = "card">
           <h1>Details</h1>
               <h2> Features detected in EEG-PZ-OZ</h2>
@@ -188,6 +194,73 @@ $(document).ready(function(){
           </div>
     </div>
 
+      <div class = "card">
+        <h1> Select Signal to Display in the space below </h1>
+        <select id="Grad">
+            <option>Choose Signal to Display</option>
+            <option value="EEG-FPZ-CZ-Grad">EEG-FPZ-CZ Saliency</option>
+            <option value="EEG-PZ-OZ-Grad">EEG-PZ-OZ Saliency</option>
+            <option value="EOG-Grad">EOG Saliency</option>
+            <option value="EMG-Grad">EMG Saliency</option>
+            <option value="Resp-Oro-Nasal-Grad">Resp-Oro-Nasal Saliency</option>
+            <option value="Temp-Grad">Temp Saliency</option>
+        </select>
+    </div>
+
+      <div class="EEG-FPZ-CZ-Grad gradbox">
+          <div class = "card">
+          <h1>Saliency Maps in EEG-FPZ-CZ</h1>
+              <div>
+                <div id="eeg-fpzcz-grad"> </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="EEG-PZ-OZ-Grad gradbox">
+          <div class = "card">
+          <h1>Saliency Maps in EEG-PZ-OZ</h1>
+              <div>
+                <div id="eeg-pzoz-grad"> </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="EOG-Grad gradbox">
+          <div class = "card">
+          <h1>Saliency Maps in EOG</h1>
+              <div>
+                <div id="EOG-grad"> </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="Resp-Oro-Nasal-Grad gradbox">
+          <div class = "card">
+          <h1>Saliency Maps in Resp-Oro-Nasal</h1>
+              <div>
+                <div id="Resp-Oro-Nasal-grad"> </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="EMG-Grad gradbox">
+          <div class = "card">
+          <h1>Saliency Maps in EMG</h1>
+              <div>
+                <div id="EMG-grad"> </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="Temp-Grad gradbox">
+          <div class = "card">
+          <h1>Saliency Maps in Temp</h1>
+              <div>
+                <div id="Temp-grad"> </div>
+              </div>
+          </div>
+      </div>
+
       <div class="card">
           <h1>Spectrogram</h1>
           <img id="spectrogram" alt="Spectrogram" style="width: 95%">
@@ -201,10 +274,9 @@ $(document).ready(function(){
 
   <div class="rightcolumn">
       <div class="card">
-      <h2>Sleep Stage Probabilities</h2>
+          <h2>Sleep Stage Probabilities of time: <p id="time"> </p> </h2>
           <div id="SleepProb"></div>
       </div>
-
     <div class="card">
 
       <h2>Power Spectral Analysis</h2>
@@ -237,14 +309,16 @@ $(document).ready(function(){
     </div>
   </div>
 </div>
-<script src="sleepstagefc.js"></script>
+<!--<script src="sleepstagefc.js"></script>-->
+<script src="sleepstage.js"></script>
 <script src="sleepprob.js"></script>
 <script src="signals.js"></script>
 <script src="psd.js"></script>
 <script>
-    var chartDiv = document.getElementById('none');
+    // var chartDiv = document.getElementById('none');
     var clientWidth = 1200;
-    var clientHeight = 400;
+    var clientHeight = 200;
+    sleepstage();
     socket.on('SleepStage', function (fulldata) {
         redraw_sleepprob(fulldata.sleepprob);
         redraw_eeg(fulldata.eeg_fpzcz, 'eeg-fpzcz', clientWidth, clientHeight);
