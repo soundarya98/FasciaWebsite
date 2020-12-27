@@ -281,12 +281,17 @@ $(document).ready(function(){
 
       <h2>Power Spectral Analysis</h2>
       <h3> EEG-FPZ-CZ </h3>
-      <p>Space for the researcher to make comments</p>
+<!--      <p>Space for the researcher to make comments</p>-->
         <div id="PSD-FPZCZ"></div>
 
-      <h3> EEG-PZ-OZ </h3>
-      <p>Space for the researcher to make comments</p>
-      <div id="PSD-PZOZ"></div>
+<!--      <h3> EEG-PZ-OZ </h3>-->
+<!--      <p>Space for the researcher to make comments</p>-->
+<!--      <div id="PSD-PZOZ"></div>-->
+
+      <h2>Fast Fourier Transform</h2>
+      <h3> EEG-FPZ-CZ </h3>
+<!--      <p>Space for the researcher to make comments</p>-->
+        <div id="FFT-FPZCZ"></div>
 
     </div>
 
@@ -329,7 +334,8 @@ $(document).ready(function(){
         redraw_signal(fulldata.resp, 'Resp-Oro-Nasal', clientWidth, clientHeight);
         redraw_signal(fulldata.temp, 'Temp', clientWidth, clientHeight);
         redraw_psd(fulldata.psd_fpzcz, 'PSD-FPZCZ');
-        redraw_psd(fulldata.psd_pzoz, 'PSD-PZOZ');
+        // redraw_psd(fulldata.psd_pzoz, 'PSD-PZOZ');
+        redraw_fft(fulldata.fft_fpzcz, 'FFT-FPZCZ');
         d = new Date();
         $("#spectrogram").attr("src", "eeg_fpzcz_specgram.png?"+d.getTime());
     });

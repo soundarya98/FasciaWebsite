@@ -143,6 +143,9 @@ io.on('connection', (socket) =>
         let rawpsd_pzoz = fs.readFileSync('data/PSD-PZOZ.json');
         let psd_pzoz = JSON.parse(rawpsd_pzoz);
 
+        let rawfft_fpzcz = fs.readFileSync('data/FFT-FPZCZ.json');
+        let fft_fpzcz = JSON.parse(rawfft_fpzcz);
+
         socket.emit('SleepStage',
             {
                 sleepprob: sleepprob,
@@ -155,6 +158,7 @@ io.on('connection', (socket) =>
                 emg:emg,
                 psd_fpzcz:psd_fpzcz,
                 psd_pzoz: psd_pzoz,
+                fft_fpzcz: fft_fpzcz,
                 temp:temp
             });
 
@@ -220,6 +224,9 @@ io.on('connection', (socket) =>
         let rawpsd_pzoz = fs.readFileSync('data/PSD-PZOZ.json');
         let psd_pzoz = JSON.parse(rawpsd_pzoz);
 
+        let rawfft_fpzcz = fs.readFileSync('data/FFT-FPZCZ.json');
+        let fft_fpzcz = JSON.parse(rawfft_fpzcz);
+
         socket.emit('SleepStage',
             {
                 sleepprob: sleepprob,
@@ -232,6 +239,7 @@ io.on('connection', (socket) =>
                 emg:emg,
                 psd_fpzcz:psd_fpzcz,
                 psd_pzoz: psd_pzoz,
+                fft_fpzcz: fft_fpzcz,
                 temp:temp
             });
     });

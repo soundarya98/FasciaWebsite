@@ -54,7 +54,7 @@ def nodeserv(transfdata, cn):
     cn.send(bytes(tfdatajson, encoding='utf8'))
 
 def main():
-    count = 16
+    count = 600
     sn = socket.socket()
     hostn = 'localhost'
     portn = 14564
@@ -271,6 +271,26 @@ def main():
             all_rows.append(row)
 
         with open('../frontend/data/PSD-PZOZ.json', 'w') as f:
+            f.write(str(all_rows).replace('\'', '"'))
+
+        from scipy.fftpack import rfft, rfftfreq
+        SAMPLE_RATE = 100
+        DURATION = 30
+
+        # Number of samples in normalized_tone
+        N = SAMPLE_RATE * DURATION
+
+        yf = rfft(json_data_eeg_fpzcz)
+        xf = rfftfreq(N, 1 / SAMPLE_RATE)
+
+        all_rows = []
+        for i in range(len(xf)):
+            row = {}
+            row["x"] = xf[i]
+            row["y"] = np.abs(yf[i])
+            all_rows.append(row)
+
+        with open('../frontend/data/FFT-FPZCZ.json', 'w') as f:
             f.write(str(all_rows).replace('\'', '"'))
 
         count_json = {}

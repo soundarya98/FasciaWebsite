@@ -91,3 +91,104 @@ function redraw_psd(data, channel) {
         .attr("class", "line") // Assign a class for styling
         .attr("d", line); // 11. Calls the line generator
 }
+
+function redraw_fft(data, channel) {
+d3.select("#svg-" + channel).remove();
+var outerWidth  = 960, outerHeight = 500;    // includes margins
+
+    var margin = {top: 80, right: 80, bottom: 80, left: 80};
+
+    var width = parseInt(d3.select("#" + channel).style("width")) - margin.left - margin.right;
+    var height = 250;
+
+document.body.style.margin="0px"; // Eliminate default margin from <body> element
+
+function xValue(d) { return d.x; }      // accessors
+function yValue(d) { return d.y; }
+
+var x = d3.scaleLinear()                // interpolator for X axis -- inner plot region
+    .domain(d3.extent(data,xValue))
+    .range([0,width]);
+
+var y = d3.scaleLinear()                // interpolator for Y axis -- inner plot region
+    .domain(d3.extent(data,yValue))
+    .range([height,0]);                  // remember, (0,0) is upper left -- this reverses "y"
+
+var line = d3.line()                     // SVG line generator
+    .x(function(d) { return x(d.x); } )
+    .y(function(d) { return y(d.y); } );
+
+var xAxis = d3.axisBottom(x)
+    .ticks(5)                            // request 5 ticks on the x axis
+
+var yAxis = d3.axisLeft(y)                // y Axis
+    .ticks(4)
+
+var svg = d3.select("#" + channel).append("svg")
+    .attr("id", "svg-" + channel)
+    .attr("width",  outerWidth)
+    .attr("height", outerHeight);        // Note: ok to leave this without units, implied "px"
+
+var g = svg.append("g")                  // <g> element is the inner plot area (i.e., inside the margins)
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+g.append("g")                            // render the Y axis in the inner plot area
+    .attr("class", "y axis")
+    .call(yAxis);
+
+g.append("g")                            // render the X axis in the inner plot area
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")  // axis runs along lower part of graph
+    .call(xAxis);
+
+// g.append("text")                         // inner x-axis label
+//     .attr("class", "x label")
+//     .attr("text-anchor", "end")
+//     .attr("x", width - 6)
+//     .attr("y", height - 6)
+//     .text("inner x-axis label");
+
+g.append("text")                         // outer x-axis label
+    .attr("class", "x label")
+    .attr("text-anchor", "end")
+    .attr("x", width/2 + 40)
+    .attr("y", height + 2*margin.bottom/3 + 6)
+    .text("Frequency (Hz)");
+
+g.append("text")                         // plot title
+    .attr("class", "x label")
+    .attr("text-anchor", "middle")
+    .attr("x", width/2)
+    .attr("y", -margin.top/2)
+    .attr("dy", "+.75em")
+    .text("Fast Fourier Transform");
+
+// g.append("text")                         // inner y-axis label
+//     .attr("class", "y label")
+//     .attr("text-anchor", "end")
+//     .attr("x", -6)
+//     .attr("y", 6)
+//     .attr("dy", ".75em")
+//     .attr("transform", "rotate(-90)")
+//     .text("inner y-axis label");
+
+g.append("text")                         // outer y-axis label
+    .attr("class", "x label")
+    .attr("text-anchor", "middle")
+    .attr("x", -height/2)
+    .attr("y", -6 - margin.left/3)
+    .attr("dy", "-.75em")
+    .attr("transform", "rotate(-90)")
+    .text("Magnitude of FFT");
+
+g.append("path")                         // plot the data as a line
+    .datum(data)
+    .attr("class", "line")
+    .attr("d", line)
+    .style('fill', 'none')
+    .style('stroke', '#fff')
+  .transition()
+    .delay(0)
+    .duration(0)
+    .style('stroke', '#000')
+}
