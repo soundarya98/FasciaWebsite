@@ -102,6 +102,21 @@ $(document).ready(function(){
     }).change();
 });
 
+$(document).ready(function(){
+    $("#PSD").change(function(){
+        $(this).find("option:selected").each(function(){
+            var optionValue = $(this).attr("value");
+            if(optionValue){
+                $(".psdbox").not("." + optionValue).hide();
+                $("." + optionValue).show();
+                socket.emit("Updated", "data");
+            } else{
+                $(".psdbox").hide();
+            }
+        });
+    }).change();
+});
+
 </script>
 
 </head>
@@ -274,15 +289,77 @@ $(document).ready(function(){
 
   <div class="rightcolumn">
       <div class="card">
-          <h2>Sleep Stage Probabilities of time: <p id="time"> </p> </h2>
+          <h1>Sleep Stage Probabilities of time: <p id="time"> </p> </h1>
           <div id="SleepProb"></div>
       </div>
     <div class="card">
 
-      <h2>Power Spectral Analysis</h2>
-      <h3> EEG-FPZ-CZ </h3>
-<!--      <p>Space for the researcher to make comments</p>-->
-        <div id="PSD-FPZCZ"></div>
+        <div class = "card">
+        <h1> Select PSD to Display in the space below </h1>
+        <select id="PSD">
+            <option>Choose PSD to Display</option>
+            <option value="EEG-FPZ-CZ-PSD">EEG-FPZ-CZ PSD</option>
+            <option value="EEG-PZ-OZ-PSD">EEG-PZ-OZ PSD</option>
+<!--            <option value="EOG-PSD">EOG PSD</option>-->
+<!--            <option value="EMG-PSD">EMG PSD</option>-->
+<!--            <option value="Resp-Oro-Nasal-PSD">Resp-Oro-Nasal PSD</option>-->
+<!--            <option value="Temp-PSD">Temp PSD</option>-->
+        </select>
+    </div>
+
+      <div class="EEG-FPZ-CZ-PSD psdbox">
+          <div class = "card">
+<!--          <h1>PSD of EEG-FPZ-CZ</h1>-->
+              <div>
+                <div id="EEG-FPZ-CZ-PSD"> </div>
+              </div>
+          </div>
+      </div>
+      <div class="EEG-PZ-OZ-PSD psdbox">
+          <div class = "card">
+<!--          <h1>PSD of EEG-PZ-OZ</h1>-->
+              <div>
+                <div id="EEG-PZ-OZ-PSD"> </div>
+              </div>
+          </div>
+      </div>
+<!--      <div class="EOG-PSD psdbox">-->
+<!--          <div class = "card">-->
+<!--&lt;!&ndash;          <h1>PSD of EOG</h1>&ndash;&gt;-->
+<!--              <div>-->
+<!--                <div id="EOG-PSD"> </div>-->
+<!--              </div>-->
+<!--          </div>-->
+<!--      </div>-->
+<!--      <div class="Resp-Oro-Nasal-PSD psdbox">-->
+<!--          <div class = "card">-->
+<!--&lt;!&ndash;          <h1>PSD of Resp-Oro-Nasal</h1>&ndash;&gt;-->
+<!--              <div>-->
+<!--                <div id="Resp-Oro-Nasal-PSD"> </div>-->
+<!--              </div>-->
+<!--          </div>-->
+<!--      </div>-->
+<!--      <div class="EMG-PSD psdbox">-->
+<!--          <div class = "card">-->
+<!--&lt;!&ndash;          <h1>PSD of EMG</h1>&ndash;&gt;-->
+<!--              <div>-->
+<!--                <div id="EMG-PSD"> </div>-->
+<!--              </div>-->
+<!--          </div>-->
+<!--      </div>-->
+<!--      <div class="Temp-PSD psdbox">-->
+<!--          <div class = "card">-->
+<!--&lt;!&ndash;          <h1>PSD of Temp</h1>&ndash;&gt;-->
+<!--              <div>-->
+<!--                <div id="Temp-PSD"> </div>-->
+<!--              </div>-->
+<!--          </div>-->
+<!--      </div>-->
+
+<!--      <h2>Power Spectral Analysis</h2>-->
+<!--      <h3> EEG-FPZ-CZ </h3>-->
+<!--&lt;!&ndash;      <p>Space for the researcher to make comments</p>&ndash;&gt;-->
+<!--        <div id="PSD-FPZCZ"></div>-->
 
 <!--      <h3> EEG-PZ-OZ </h3>-->
 <!--      <p>Space for the researcher to make comments</p>-->
@@ -325,6 +402,8 @@ $(document).ready(function(){
     var clientHeight = 200;
     sleepstage();
     socket.on('SleepStage', function (fulldata) {
+        redraw_psd(fulldata.psd_fpzcz, 'EEG-FPZ-CZ');
+        redraw_psd(fulldata.psd_pzoz, 'EEG-PZ-OZ');
         redraw_sleepprob(fulldata.sleepprob);
         redraw_eeg(fulldata.eeg_fpzcz, 'eeg-fpzcz', clientWidth, clientHeight);
         redraw_eeg(fulldata.eeg_pzoz, 'eeg-pzoz', clientWidth, clientHeight);
@@ -338,8 +417,6 @@ $(document).ready(function(){
         redraw_signal(fulldata.emg, 'EMG', clientWidth, clientHeight);
         redraw_signal(fulldata.resp, 'Resp-Oro-Nasal', clientWidth, clientHeight);
         redraw_signal(fulldata.temp, 'Temp', clientWidth, clientHeight);
-        redraw_psd(fulldata.psd_fpzcz, 'PSD-FPZCZ');
-        // redraw_psd(fulldata.psd_pzoz, 'PSD-PZOZ');
         redraw_fft(fulldata.fft_fpzcz, 'FFT-FPZCZ');
         d = new Date();
         $("#spectrogram").attr("src", "eeg_fpzcz_specgram.png?"+d.getTime());

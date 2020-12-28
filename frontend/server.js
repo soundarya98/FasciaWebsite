@@ -163,6 +163,8 @@ io.on('connection', (socket) =>
 
         socket.emit('SleepStage',
             {
+                psd_fpzcz: psd_fpzcz,
+                psd_pzoz: psd_pzoz,
                 sleepprob: sleepprob,
                 stage: sleepstage,
                 eeg_fpzcz: eeg_fpzcz,
@@ -176,8 +178,6 @@ io.on('connection', (socket) =>
                 eog:eog,
                 resp:resp,
                 emg:emg,
-                psd_fpzcz:psd_fpzcz,
-                psd_pzoz: psd_pzoz,
                 fft_fpzcz: fft_fpzcz,
                 temp:temp
             });
@@ -264,6 +264,8 @@ io.on('connection', (socket) =>
 
         socket.emit('SleepStage',
             {
+                psd_fpzcz: psd_fpzcz,
+                psd_pzoz: psd_pzoz,
                 sleepprob: sleepprob,
                 stage: sleepstage,
                 eeg_fpzcz: eeg_fpzcz,
@@ -277,8 +279,6 @@ io.on('connection', (socket) =>
                 eog:eog,
                 resp:resp,
                 emg:emg,
-                psd_fpzcz:psd_fpzcz,
-                psd_pzoz: psd_pzoz,
                 fft_fpzcz: fft_fpzcz,
                 temp:temp
             });

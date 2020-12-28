@@ -1,8 +1,9 @@
 function redraw_psd(data, channel) {
-    d3.select("#svg-" + channel).remove();
+    d3.select("#svg-" + channel + "-PSD").remove();
     var margin = {top: 80, right: 80, bottom: 80, left: 80};
 
-    width = parseInt(d3.select("#" + channel).style("width")) - margin.left - margin.right;
+    // width = parseInt(d3.select("#" + channel + "-PSD").style("width")) - margin.left - margin.right;
+    width = 300;
     height = 250;
 
     // Scales and axes. Note the inverted domain for the y-scale
@@ -54,8 +55,8 @@ function redraw_psd(data, channel) {
         .curve(d3.curveMonotoneX) // apply smoothing to the line
 
     // Add the SVG to the page and employ #2
-    var svg = d3.select("#" + channel).append("svg")
-        .attr("id", "svg-" + channel)
+    var svg = d3.select("#" + channel + "-PSD").append("svg")
+        .attr("id", "svg-" + channel + "-PSD")
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
         .append("g")
