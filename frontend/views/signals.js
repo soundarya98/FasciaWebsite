@@ -286,10 +286,10 @@ function redraw_signal(data, channel, clientWidth, clientHeight) {
         .style("alignment-baseline", "middle")
 };
 
-function redraw_grad(data, clientWidth, clientHeight) {
-    d3.select("#" + "svg-eeg-fpzcz-grad").remove();
-    var chartDiv = document.getElementById("eeg-fpzcz-grad");
-    var svg = d3.select(chartDiv).append("svg").attr("id", "svg-eeg-fpzcz-grad");
+function redraw_grad(data, channel, clientWidth, clientHeight) {
+    d3.select("#" + "svg-" + channel + "-grad").remove();
+    var chartDiv = document.getElementById(channel + "-Grad");
+    var svg = d3.select(chartDiv).append("svg").attr("id", "svg-" + channel + "-grad");
 
     var margin = {top: 10, right: 0, bottom: 30, left: 20};
     // var width = chartDiv.clientWidth - margin.left - margin.right;
@@ -333,7 +333,7 @@ function redraw_grad(data, clientWidth, clientHeight) {
         d.date = parseTime(d.date);
     });
 
-    var keys_ =  ["EEG_FPZ_CZ", "EEG_FPZ_CZ_Grad"];
+    var keys_ =  [channel, channel + "-Grad"];
 
 
     var rows = keys_.map(function (id) {
@@ -410,11 +410,11 @@ function redraw_grad(data, clientWidth, clientHeight) {
         // .style("fill", z(3));
 
     var color = d3.scale.ordinal()
-      .domain(["EEG", "EEG-Grad"])
+      .domain([channel, channel+"-Grad"])
       .range(d3.schemeCategory10);
 
     row.selectAll("mydots")
-      .data(["EEG", "EEG-Grad"])
+      .data([channel, channel+"-Grad"])
       .enter()
       .append("circle")
         .attr("cx", function(d,i){ return 0 + i*65})
@@ -424,7 +424,7 @@ function redraw_grad(data, clientWidth, clientHeight) {
         .style("fill", function(d){ return color(d)});
 
     row.selectAll("mylabels")
-        .data(["EEG", "EEG-Grad"])
+        .data([channel, channel+"-Grad"])
         .enter()
         .append("text")
         .attr("x", function(d,i){ return 10 + i*65})

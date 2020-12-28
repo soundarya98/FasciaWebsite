@@ -122,9 +122,6 @@ io.on('connection', (socket) =>
         let raweeg_pzoz = fs.readFileSync('data/EEG-PZ-OZ.json');
         let eeg_pzoz = JSON.parse(raweeg_pzoz);
 
-        let raweeg_fpzcz_grad = fs.readFileSync('data/EEG-FPZ-CZ-Grad.json');
-        let eeg_fpzcz_grad = JSON.parse(raweeg_fpzcz_grad);
-
         let eog = fs.readFileSync('data/EOG.json');
         eog = JSON.parse(eog);
 
@@ -136,6 +133,24 @@ io.on('connection', (socket) =>
 
         let temp = fs.readFileSync('data/Temp.json');
         temp = JSON.parse(temp);
+
+        let raweeg_fpzcz_grad = fs.readFileSync('data/EEG-FPZ-CZ-Grad.json');
+        let eeg_fpzcz_grad = JSON.parse(raweeg_fpzcz_grad);
+
+        let raweeg_pzoz_grad = fs.readFileSync('data/EEG-PZ-OZ-Grad.json');
+        let eeg_pzoz_grad = JSON.parse(raweeg_pzoz_grad);
+
+        let raweog_grad = fs.readFileSync('data/EOG-Grad.json');
+        let eog_grad = JSON.parse(raweog_grad);
+
+        let rawresp_grad = fs.readFileSync('data/Resp-Oro-Nasal-Grad.json');
+        let resp_grad = JSON.parse(rawresp_grad);
+
+        let rawemg_grad = fs.readFileSync('data/EMG-Grad.json');
+        let emg_grad = JSON.parse(rawemg_grad);
+
+        let rawtemp_grad = fs.readFileSync('data/Temp-Grad.json');
+        let temp_grad = JSON.parse(rawtemp_grad);
 
         let rawpsd_fpzcz = fs.readFileSync('data/PSD-FPZCZ.json');
         let psd_fpzcz = JSON.parse(rawpsd_fpzcz);
@@ -153,6 +168,11 @@ io.on('connection', (socket) =>
                 eeg_fpzcz: eeg_fpzcz,
                 eeg_pzoz: eeg_pzoz,
                 eeg_fpzcz_grad: eeg_fpzcz_grad,
+                eeg_pzoz_grad: eeg_pzoz_grad,
+                eog_grad: eog_grad,
+                resp_grad: resp_grad,
+                emg_grad: emg_grad,
+                temp_grad: temp_grad,
                 eog:eog,
                 resp:resp,
                 emg:emg,
@@ -206,6 +226,21 @@ io.on('connection', (socket) =>
         let raweeg_fpzcz_grad = fs.readFileSync('data/EEG-FPZ-CZ-Grad.json');
         let eeg_fpzcz_grad = JSON.parse(raweeg_fpzcz_grad);
 
+        let raweeg_pzoz_grad = fs.readFileSync('data/EEG-PZ-OZ-Grad.json');
+        let eeg_pzoz_grad = JSON.parse(raweeg_pzoz_grad);
+
+        let raweog_grad = fs.readFileSync('data/EOG-Grad.json');
+        let eog_grad = JSON.parse(raweog_grad);
+
+        let rawresp_grad = fs.readFileSync('data/Resp-Oro-Nasal-Grad.json');
+        let resp_grad = JSON.parse(rawresp_grad);
+
+        let rawemg_grad = fs.readFileSync('data/EMG-Grad.json');
+        let emg_grad = JSON.parse(rawemg_grad);
+
+        let rawtemp_grad = fs.readFileSync('data/Temp-Grad.json');
+        let temp_grad = JSON.parse(rawtemp_grad);
+
         let eog = fs.readFileSync('data/EOG.json');
         eog = JSON.parse(eog);
 
@@ -234,6 +269,11 @@ io.on('connection', (socket) =>
                 eeg_fpzcz: eeg_fpzcz,
                 eeg_pzoz: eeg_pzoz,
                 eeg_fpzcz_grad: eeg_fpzcz_grad,
+                eeg_pzoz_grad: eeg_pzoz_grad,
+                eog_grad: eog_grad,
+                resp_grad: resp_grad,
+                emg_grad: emg_grad,
+                temp_grad: temp_grad,
                 eog:eog,
                 resp:resp,
                 emg:emg,

@@ -211,7 +211,7 @@ $(document).ready(function(){
           <div class = "card">
           <h1>Saliency Maps in EEG-FPZ-CZ</h1>
               <div>
-                <div id="eeg-fpzcz-grad"> </div>
+                <div id="EEG-FPZ-CZ-Grad"> </div>
               </div>
           </div>
       </div>
@@ -220,7 +220,7 @@ $(document).ready(function(){
           <div class = "card">
           <h1>Saliency Maps in EEG-PZ-OZ</h1>
               <div>
-                <div id="eeg-pzoz-grad"> </div>
+                <div id="EEG-PZ-OZ-Grad"> </div>
               </div>
           </div>
       </div>
@@ -229,7 +229,7 @@ $(document).ready(function(){
           <div class = "card">
           <h1>Saliency Maps in EOG</h1>
               <div>
-                <div id="EOG-grad"> </div>
+                <div id="EOG-Grad"> </div>
               </div>
           </div>
       </div>
@@ -238,7 +238,7 @@ $(document).ready(function(){
           <div class = "card">
           <h1>Saliency Maps in Resp-Oro-Nasal</h1>
               <div>
-                <div id="Resp-Oro-Nasal-grad"> </div>
+                <div id="Resp-Oro-Nasal-Grad"> </div>
               </div>
           </div>
       </div>
@@ -247,7 +247,7 @@ $(document).ready(function(){
           <div class = "card">
           <h1>Saliency Maps in EMG</h1>
               <div>
-                <div id="EMG-grad"> </div>
+                <div id="EMG-Grad"> </div>
               </div>
           </div>
       </div>
@@ -256,7 +256,7 @@ $(document).ready(function(){
           <div class = "card">
           <h1>Saliency Maps in Temp</h1>
               <div>
-                <div id="Temp-grad"> </div>
+                <div id="Temp-Grad"> </div>
               </div>
           </div>
       </div>
@@ -328,7 +328,12 @@ $(document).ready(function(){
         redraw_sleepprob(fulldata.sleepprob);
         redraw_eeg(fulldata.eeg_fpzcz, 'eeg-fpzcz', clientWidth, clientHeight);
         redraw_eeg(fulldata.eeg_pzoz, 'eeg-pzoz', clientWidth, clientHeight);
-        redraw_grad(fulldata.eeg_fpzcz_grad, clientWidth, clientHeight);
+        redraw_grad(fulldata.eeg_fpzcz_grad,'EEG-FPZ-CZ', clientWidth, clientHeight);
+        redraw_grad(fulldata.eeg_pzoz_grad,'EEG-PZ-OZ', clientWidth, clientHeight);
+        redraw_grad(fulldata.eog_grad, 'EOG', clientWidth, clientHeight);
+        redraw_grad(fulldata.resp_grad,'Resp-Oro-Nasal',  clientWidth, clientHeight);
+        redraw_grad(fulldata.emg_grad, 'EMG', clientWidth, clientHeight);
+        redraw_grad(fulldata.temp_grad, 'Temp', clientWidth, clientHeight);
         redraw_signal(fulldata.eog, 'EOG', clientWidth, clientHeight);
         redraw_signal(fulldata.emg, 'EMG', clientWidth, clientHeight);
         redraw_signal(fulldata.resp, 'Resp-Oro-Nasal', clientWidth, clientHeight);
