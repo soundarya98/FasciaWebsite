@@ -12,7 +12,7 @@
 
 ### Interface
 
-![images/InterfaceWithHypnogram1.png](images/InterfaceWithHypnogram1.png)
+![images/InterfaceWithHypnogram1.png](images/InterfaceWithHypnogram0.png)
 
 ![images/InterfaceWithHypnogram2.png](images/InterfaceWithHypnogram2.png)
 
