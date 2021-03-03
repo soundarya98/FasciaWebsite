@@ -1,5 +1,8 @@
 # FASCIA- A brief Overview
-
+install
+``
+pip install git+https://www.github.com/keras-team/keras-contrib.git
+``
 ## Interface Details
 
 ### Registration Page

@@ -1,5 +1,5 @@
-from keras import optimizers, losses, activations, models
-from keras.layers import Dense, Input, Dropout, Convolution1D, MaxPool1D, GlobalMaxPool1D, GlobalAveragePooling1D, \
+from tensorflow.keras import optimizers, losses, activations, models
+from tensorflow.keras.layers import Dense, Input, Dropout, Convolution1D, MaxPool1D, GlobalMaxPool1D, GlobalAveragePooling1D, \
     concatenate, SpatialDropout1D, TimeDistributed, Bidirectional, LSTM
 from keras_contrib.layers import CRF
 

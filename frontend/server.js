@@ -305,7 +305,8 @@ const client = net.createConnection
 {
   console.log('Client connected to the server.');
   client.write('CLIENT: Hello this is the client!');
-});
+})
+
 
 http.listen(8080, () => {
   console.log('listening on *:8080');
