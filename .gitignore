@@ -5,4 +5,4 @@ keras-contrib/
 frontend/views/eeg_fpzcz_specgram.png
 frontend/data/
 frontend/node_modules/
-
+*.swp
