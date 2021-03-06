@@ -1,0 +1,8 @@
+keras-contrib/
+/**/*.pyc
+/**/*.npz
+/**/__pycache__/
+frontend/views/eeg_fpzcz_specgram.png
+frontend/data/
+frontend/node_modules/
+
