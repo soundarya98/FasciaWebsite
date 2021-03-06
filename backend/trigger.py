@@ -20,32 +20,32 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.environ["TZ"] = "US/Eastern"
 qu = Queue.Queue()
 
-class RepeatedTimer(object):
-    def __init__(self, interval, function, *args, **kwargs):
-        self._timer = None
-        self.interval = interval
-        self.function = function
-        self.args = args
-        self.kwargs = kwargs
-        self.is_running = False
-        self.next_call = time.time()
-        self.start()
+# class RepeatedTimer(object):
+#     def __init__(self, interval, function, *args, **kwargs):
+#         self._timer = None
+#         self.interval = interval
+#         self.function = function
+#         self.args = args
+#         self.kwargs = kwargs
+#         self.is_running = False
+#         self.next_call = time.time()
+#         self.start()
 
-    def _run(self):
-        self.is_running = False
-        self.start()
-        self.function(*self.args, **self.kwargs)
+#     def _run(self):
+#         self.is_running = False
+#         self.start()
+#         self.function(*self.args, **self.kwargs)
 
-    def start(self):
-        if not self.is_running:
-            self.next_call += self.interval
-            self._timer = threading.Timer(self.next_call - time.time(), self._run)
-            self._timer.start()
-            self.is_running = True
+#     def start(self):
+#         if not self.is_running:
+#             self.next_call += self.interval
+#             self._timer = threading.Timer(self.next_call - time.time(), self._run)
+#             self._timer.start()
+#             self.is_running = True
 
-    def stop(self):
-        self._timer.cancel()
-        self.is_running = False
+#     def stop(self):
+#         self._timer.cancel()
+#         self.is_running = False
 
 
 def nodeserv(transfdata, cn):
@@ -64,6 +64,7 @@ def main():
     sn.listen(5)
     cn, addrn = sn.accept()
     print('Got connection from', addrn)
+    
 
     mapping = {0: 'Wake', 1: 'N1', 2: 'N2', 3: 'N3', 4: 'REM'}
     # hyp = {0: 4, 1: 2, 2: 1, 3: 0, 4: 3}
@@ -82,13 +83,14 @@ def main():
 
     np.savez(save_path, **save_dict)
 
-    rt = RepeatedTimer(30, func, qu)  # it auto-starts, no need of rt.start()
+    # rt = RepeatedTimer(30, func, qu)  # it auto-starts, no need of rt.start()
     while True:
         print("Epoch Number: ", count)
         save_dict = {
             'x': data[count, :, :],
             'y': labels[count]}
         np.savez(save_path, **save_dict)
+        func(qu)
         dict_temp = qu.get()
 
         grads = dict_temp["grads"]
@@ -355,11 +357,11 @@ def main():
         nodeserv(int(sleepstage), cn)
         count += 1
         qu.task_done()
-
-    try:
-        sleep(150)  # your long-running job goes here
-    finally:
-        rt.stop()  # better in a try/finally block to make sure the program ends
+        cn.recv(2048)
+    # try:
+    #     sleep(150)  # your long-running job goes here
+    # finally:
+    #     rt.stop()  # better in a try/finally block to make sure the program ends
 
 
 if __name__ == "__main__":

@@ -66,6 +66,20 @@
     });
 }
 
+function getNext(){
+    socket.emit("Next", "next");
+    socket.on("NextResponse", function (data) {
+
+    });
+}
+
+function getPrev(){
+    socket.emit("Prev", "prev");
+    socket.on("PrevResponse", function (data) {
+
+    });
+}
+
 $(document).ready(function(){
     $("#Signals").change(function(){
         $(this).find("option:selected").each(function(){
@@ -388,6 +402,10 @@ $(document).ready(function(){
     <div class="card">
       <h3>Researcher experiment comments</h3>
       <p>Preliminary study on correlation between body temperature and quality of sleep</p>
+    </div>
+    <div class="getdata">
+        <button class="button" onclick="getNext()">Next</button>
+        <button class="button" onclick="getPrev()">Prev</button>
     </div>
   </div>
 </div>

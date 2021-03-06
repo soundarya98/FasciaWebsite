@@ -196,14 +196,14 @@ io.on('connection', (socket) =>
           let coll = dbo.collection('UserData');
 
             coll.insert(insert, function (err, res) {
-              if (err) {
-                  console.log("Updating");
-              }
-              else {
-                  console.log("Number of epochs inserted: " + res.insertedCount);
-                  db.close();
-              }
-          });
+                if (err) {
+                    console.log("Updating");
+                }
+                else {
+                    console.log("Number of epochs inserted: " + res.insertedCount);
+                    db.close();
+                }
+            });
         });
     });
 
@@ -298,13 +298,56 @@ io.on('connection', (socket) =>
 
         });
     });
+    client.on('NextResponse',(data)=>{
+        socket.emit('NextResponse',
+            {
+                psd_fpzcz: psd_fpzcz,
+                psd_pzoz: psd_pzoz,
+                sleepprob: sleepprob,
+                stage: sleepstage,
+                eeg_fpzcz: eeg_fpzcz,
+                eeg_pzoz: eeg_pzoz,
+                eeg_fpzcz_grad: eeg_fpzcz_grad,
+                eeg_pzoz_grad: eeg_pzoz_grad,
+                eog_grad: eog_grad,
+                resp_grad: resp_grad,
+                emg_grad: emg_grad,
+                temp_grad: temp_grad,
+                eog:eog,
+                resp:resp,
+                emg:emg,
+                fft_fpzcz: fft_fpzcz,
+                temp:temp
+            });
+    });
+
+    socket.on('Next', (data) => {
+        console.log('Next');
+        client.write('Next');
+    });
+
+    socket.on('Prev', (data) => {
+        console.log('Prev');
+        MongoClient.connect(url, function(err, db) {
+            if (err) throw err;
+
+            var dbo = db.db("FASCIA");
+            dbo.collection("UserData").find({}).toArray(function (err, result) {
+                if (err) throw err;
+                // console.log(result);
+                socket.emit('DownloadResponse', {result});
+                db.close();
+            });
+
+        });
+    });
 });
 
 const client = net.createConnection
 ({port: 14564 }, () =>
 {
   console.log('Client connected to the server.');
-  client.write('CLIENT: Hello this is the client!');
+//   client.write('CLIENT: Hello this is the client!');
 });
 
 http.listen(8080, () => {
