@@ -20,33 +20,6 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.environ["TZ"] = "US/Eastern"
 qu = Queue.Queue()
 
-# class RepeatedTimer(object):
-#     def __init__(self, interval, function, *args, **kwargs):
-#         self._timer = None
-#         self.interval = interval
-#         self.function = function
-#         self.args = args
-#         self.kwargs = kwargs
-#         self.is_running = False
-#         self.next_call = time.time()
-#         self.start()
-
-#     def _run(self):
-#         self.is_running = False
-#         self.start()
-#         self.function(*self.args, **self.kwargs)
-
-#     def start(self):
-#         if not self.is_running:
-#             self.next_call += self.interval
-#             self._timer = threading.Timer(self.next_call - time.time(), self._run)
-#             self._timer.start()
-#             self.is_running = True
-
-#     def stop(self):
-#         self._timer.cancel()
-#         self.is_running = False
-
 
 def nodeserv(transfdata, cn):
     # tfdata = transfdata.values.tolist()
@@ -83,7 +56,6 @@ def main():
 
     np.savez(save_path, **save_dict)
 
-    # rt = RepeatedTimer(30, func, qu)  # it auto-starts, no need of rt.start()
     while True:
         print("Epoch Number: ", count)
         save_dict = {
@@ -95,7 +67,7 @@ def main():
 
         grads = dict_temp["grads"]
         sleepstage = dict_temp["Y_pred"]
-        print(sleepstage)
+        print("Sleep Stage is:"+str(sleepstage))
 
         json_data = data[count, :, :]
 
@@ -357,11 +329,8 @@ def main():
         nodeserv(int(sleepstage), cn)
         count += 1
         qu.task_done()
-        cn.recv(2048)
-    # try:
-    #     sleep(150)  # your long-running job goes here
-    # finally:
-    #     rt.stop()  # better in a try/finally block to make sure the program ends
+        cn.recv(2048) # When it recives 'next' signal from server.js, this gets unblocked 
+    
 
 
 if __name__ == "__main__":

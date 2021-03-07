@@ -191,11 +191,30 @@ io.on('connection', (socket) =>
           count = count.data;
           console.log("count is", count);
 
-          var insert = {_id: count, EEG_FPZ_CZ:eeg_fpzcz, EEG_PZ_OZ:eeg_pzoz, EOG:eog, Resp_Oro_Nasal:resp, EMG:emg, Temp:temp};
+          var insert = {
+            _id: count,
+            psd_fpzcz: psd_fpzcz,
+            psd_pzoz: psd_pzoz,
+            sleepprob: sleepprob,
+            stage: sleepstage,
+            eeg_fpzcz: eeg_fpzcz,
+            eeg_pzoz: eeg_pzoz,
+            eeg_fpzcz_grad: eeg_fpzcz_grad,
+            eeg_pzoz_grad: eeg_pzoz_grad,
+            eog_grad: eog_grad,
+            resp_grad: resp_grad,
+            emg_grad: emg_grad,
+            temp_grad: temp_grad,
+            eog:eog,
+            resp:resp,
+            emg:emg,
+            fft_fpzcz: fft_fpzcz,
+            temp:temp
+        }; // inserting the full data so that we can retrive anything.
 
           let coll = dbo.collection('UserData');
 
-            coll.insert(insert, function (err, res) {
+            coll.insertOne(insert, function (err, res) { 
                 if (err) {
                     console.log("Updating");
                 }
@@ -291,55 +310,92 @@ io.on('connection', (socket) =>
             var dbo = db.db("FASCIA");
             dbo.collection("UserData").find({}).toArray(function (err, result) {
                 if (err) throw err;
-                // console.log(result);
                 socket.emit('DownloadResponse', {result});
                 db.close();
             });
 
         });
     });
-    client.on('NextResponse',(data)=>{
-        socket.emit('NextResponse',
-            {
-                psd_fpzcz: psd_fpzcz,
-                psd_pzoz: psd_pzoz,
-                sleepprob: sleepprob,
-                stage: sleepstage,
-                eeg_fpzcz: eeg_fpzcz,
-                eeg_pzoz: eeg_pzoz,
-                eeg_fpzcz_grad: eeg_fpzcz_grad,
-                eeg_pzoz_grad: eeg_pzoz_grad,
-                eog_grad: eog_grad,
-                resp_grad: resp_grad,
-                emg_grad: emg_grad,
-                temp_grad: temp_grad,
-                eog:eog,
-                resp:resp,
-                emg:emg,
-                fft_fpzcz: fft_fpzcz,
-                temp:temp
-            });
-    });
-
+    // To process next query 
     socket.on('Next', (data) => {
         console.log('Next');
-        client.write('Next');
+        let offset = JSON.parse(fs.readFileSync('data/offset.json'));
+        offset = offset.data; // introducing offset to know when to fetch for data or query for it 
+        let  count = JSON.parse(fs.readFileSync('data/count.json'));
+        count = count.data;
+        if(offset === 0 ){
+            client.write('Next');
+        }
+        else{
+            offset++;
+            MongoClient.connect(url, function(err, db) {
+                if (err) throw err;
+                var dbo = db.db("FASCIA");
+                dbo.collection("UserData").find({_id:count+offset}).toArray(function (err, result) {
+                    if (err) throw err;
+                    socket.emit('SleepStage',
+                    {
+                        psd_fpzcz: result[0].psd_fpzcz,
+                        psd_pzoz: result[0].psd_pzoz,
+                        sleepprob: result[0].sleepprob,
+                        stage: result[0].stage,
+                        eeg_fpzcz: result[0].eeg_fpzcz,
+                        eeg_pzoz: result[0].eeg_pzoz,
+                        eeg_fpzcz_grad: result[0].eeg_fpzcz_grad,
+                        eeg_pzoz_grad: result[0].eeg_pzoz_grad,
+                        eog_grad: result[0].eog_grad,
+                        resp_grad: result[0].resp_grad,
+                        emg_grad: result[0].emg_grad,
+                        temp_grad: result[0].temp_grad,
+                        eog: result[0].eog,
+                        resp: result[0].resp,
+                        emg: result[0].emg,
+                        fft_fpzcz: result[0].fft_fpzcz,
+                        temp: result[0].temp
+                    });
+                    db.close();
+                });
+            });
+        }
+        fs.writeFileSync('data/offset.json', JSON.stringify({"data":offset}));
     });
-
+    // To process previous query 
     socket.on('Prev', (data) => {
         console.log('Prev');
+        let offset = JSON.parse(fs.readFileSync('data/offset.json'));
+        offset = offset.data;
+        let  count = JSON.parse(fs.readFileSync('data/count.json'));
+        count = count.data;
+        offset-- ;
         MongoClient.connect(url, function(err, db) {
             if (err) throw err;
-
             var dbo = db.db("FASCIA");
-            dbo.collection("UserData").find({}).toArray(function (err, result) {
+            dbo.collection("UserData").find({_id:count+offset}).toArray(function (err, result) {
                 if (err) throw err;
-                // console.log(result);
-                socket.emit('DownloadResponse', {result});
+                socket.emit('SleepStage',
+                {
+                    psd_fpzcz: result[0].psd_fpzcz,
+                    psd_pzoz: result[0].psd_pzoz,
+                    sleepprob: result[0].sleepprob,
+                    stage: result[0].stage,
+                    eeg_fpzcz: result[0].eeg_fpzcz,
+                    eeg_pzoz: result[0].eeg_pzoz,
+                    eeg_fpzcz_grad: result[0].eeg_fpzcz_grad,
+                    eeg_pzoz_grad: result[0].eeg_pzoz_grad,
+                    eog_grad: result[0].eog_grad,
+                    resp_grad: result[0].resp_grad,
+                    emg_grad: result[0].emg_grad,
+                    temp_grad: result[0].temp_grad,
+                    eog: result[0].eog,
+                    resp: result[0].resp,
+                    emg: result[0].emg,
+                    fft_fpzcz: result[0].fft_fpzcz,
+                    temp: result[0].temp
+                });
                 db.close();
             });
-
         });
+        fs.writeFileSync('data/offset.json', JSON.stringify({"data":offset}));
     });
 });
 
@@ -347,9 +403,14 @@ const client = net.createConnection
 ({port: 14564 }, () =>
 {
   console.log('Client connected to the server.');
-//   client.write('CLIENT: Hello this is the client!');
 });
 
 http.listen(8080, () => {
   console.log('listening on *:8080');
+  MongoClient.connect(url, function(err, db) {
+    if (err) throw err;
+    var dbo = db.db("FASCIA");
+    dbo.collection("UserData").deleteMany({}); // to clear database for the previous run.
+    fs.writeFileSync('data/offset.json', JSON.stringify({"data":0})); // initialising offset 
+});
 });

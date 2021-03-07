@@ -68,16 +68,10 @@
 
 function getNext(){
     socket.emit("Next", "next");
-    socket.on("NextResponse", function (data) {
-
-    });
 }
 
 function getPrev(){
     socket.emit("Prev", "prev");
-    socket.on("PrevResponse", function (data) {
-
-    });
 }
 
 $(document).ready(function(){
@@ -145,7 +139,12 @@ $(document).ready(function(){
   <a href="#">Researcher</a>
   <a href="#">User</a>
 </div>
-
+<!-- Adding next and prev button -->
+<div id="getdata"> 
+    <button class="button" onclick="getPrev()">Prev</button>
+    <p>Navigate</p>
+    <button class="button" onclick="getNext()">Next</button>
+</div>
 <div class="row">
   <div class="leftcolumn">
 
@@ -402,10 +401,6 @@ $(document).ready(function(){
     <div class="card">
       <h3>Researcher experiment comments</h3>
       <p>Preliminary study on correlation between body temperature and quality of sleep</p>
-    </div>
-    <div class="getdata">
-        <button class="button" onclick="getNext()">Next</button>
-        <button class="button" onclick="getPrev()">Prev</button>
     </div>
   </div>
 </div>
