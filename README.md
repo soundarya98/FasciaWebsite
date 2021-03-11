@@ -12,11 +12,10 @@
 
 ### Interface
 
-![images/1.png](images/1.png)
+![images/InterfaceWithHypnogram1.png](images/InterfaceWithHypnogram0.png)
 
-![images/2.png](images/2.png)
+![images/InterfaceWithHypnogram2.png](images/InterfaceWithHypnogram2.png)
 
-![images/3.png](images/3.png)
 
 ## Website Details - Usage
 
