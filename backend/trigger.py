@@ -59,6 +59,7 @@ def main():
     hostn = 'localhost'
     portn = 14564
     sn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    print("before binding")
     sn.bind((hostn, portn))
     print('Server Started')
     sn.listen(5)
@@ -329,11 +330,24 @@ def main():
         all_rows = []
         for i in range(len(xf)):
             row = {}
-            row["x"] = xf[i]
-            row["y"] = np.abs(yf[i])
+            row["Frequencies"] = xf[i]
+            row["FFT"] = np.abs(yf[i])
             all_rows.append(row)
 
         with open('../frontend/data/FFT-FPZCZ.json', 'w') as f:
+            f.write(str(all_rows).replace('\'', '"'))
+
+        yf = rfft(json_data_eeg_pzoz)
+        xf = rfftfreq(N, 1 / SAMPLE_RATE)
+
+        all_rows = []
+        for i in range(len(xf)):
+            row = {}
+            row["Frequencies"] = xf[i]
+            row["FFT"] = np.abs(yf[i])
+            all_rows.append(row)
+
+        with open('../frontend/data/FFT-PZOZ.json', 'w') as f:
             f.write(str(all_rows).replace('\'', '"'))
 
         count_json = {}

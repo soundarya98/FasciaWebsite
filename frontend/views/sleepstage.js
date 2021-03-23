@@ -2,7 +2,7 @@ function sleepstage() {
     	function realTimeLineChart() {
   var margin = {top: 20, right: 20, bottom: 20, left: 50},
       width = 1200,
-      height = 200,
+      height = 100,
       duration = 500,
       color = d3.schemeCategory10;
 
@@ -273,7 +273,7 @@ function sleepstage() {
 
           hours = ((hours + 11) % 12 + 1);
 
-          if(now.getHours()<10){
+          if(hours<10){
             hours= "0" + hours;
           }
 
