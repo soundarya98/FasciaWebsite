@@ -6,9 +6,6 @@
 <link href="/css/stylesheet.css" rel="stylesheet" type="text/css">
 
 <script src="/socket.io/socket.io.js"></script>
-<!--<script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/fusioncharts.js"></script>-->
-<!--<script type="text/javascript" src="https://cdn.fusioncharts.com/fusioncharts/latest/themes/fusioncharts.theme.fusion.js"></script>-->
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.js"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -67,39 +64,9 @@
 }
 
 $(document).ready(function(){
-    $("#Signals").change(function(){
-        $(this).find("option:selected").each(function(){
-            var optionValue = $(this).attr("value");
-            if(optionValue){
-                $(".graphbox").not("." + optionValue).hide();
-                $("." + optionValue).show();
-                socket.emit("Updated", "data");
-            } else{
-                $(".graphbox").hide();
-            }
-        });
-    }).change();
-});
-
-$(document).ready(function(){
     $("button").click(function(){
         $("a")[0].click();
     });
-});
-
-$(document).ready(function(){
-    $("#Grad").change(function(){
-        $(this).find("option:selected").each(function(){
-            var optionValue = $(this).attr("value");
-            if(optionValue){
-                $(".gradbox").not("." + optionValue).hide();
-                $("." + optionValue).show();
-                socket.emit("Updated", "data");
-            } else{
-                $(".gradbox").hide();
-            }
-        });
-    }).change();
 });
 
 $(document).ready(function(){
@@ -117,19 +84,30 @@ $(document).ready(function(){
     }).change();
 });
 
+$(document).ready(function(){
+    $("#FFT").change(function(){
+        $(this).find("option:selected").each(function(){
+            var optionValue = $(this).attr("value");
+            if(optionValue){
+                $(".fftbox").not("." + optionValue).hide();
+                $("." + optionValue).show();
+                socket.emit("Updated", "data");
+            } else{
+                $(".fftbox").hide();
+            }
+        });
+    }).change();
+});
+
 </script>
 
 </head>
 <body>
 
-<!--<div class="header">-->
-<!--  <h1>FASCIA</h1>-->
-<!--</div>-->
-
 <div class="topnav">
   <a href="#">Welcome <%= username %>!</a>
-  <a href="#">Researcher</a>
-  <a href="#">User</a>
+  <a href='/index_all'>Separate Signals</a>
+<!--  <a href="#">User</a>-->
 </div>
 
 <div class="row">
@@ -140,145 +118,96 @@ $(document).ready(function(){
       <div id="chart"></div>
     </div>
 
-    <div class = "card">
-        <h1> Select Signal to Display in the space below </h1>
-        <select id="Signals">
-            <option>Choose Signal to Display</option>
-            <option value="EEG-FPZ-CZ">EEG-FPZ-CZ</option>
-            <option value="EEG-PZ-OZ">EEG-PZ-OZ</option>
-            <option value="EOG">EOG</option>
-            <option value="EMG">EMG</option>
-            <option value="Resp-Oro-Nasal">Resp-Oro-Nasal</option>
-            <option value="Temp">Temp</option>
-        </select>
-    </div>
-
-      <div class="EEG-FPZ-CZ graphbox">
-          <div class = "card">
-          <h1>Details</h1>
-              <h2> Features detected in EEG-FPZ-CZ</h2>
+<!--      <div class = "card">-->
+          <div class = "cardsignal">
+<!--              <h2>EEG-FPZ-CZ</h2>-->
               <div>
-                <div id="eeg-fpzcz"> </div>
+                <div id="EEG-FPZ-CZ"> </div>
               </div>
           </div>
-      </div>
 
-         <div class="EEG-PZ-OZ graphbox">
-          <div class = "card">
-          <h1>Details</h1>
-              <h2> Features detected in EEG-PZ-OZ</h2>
+          <div class = "cardsignal">
+
+<!--              <h2>EEG-PZ-OZ</h2>-->
               <div>
-                <div id="eeg-pzoz"> </div>
+                <div id="EEG-PZ-OZ"> </div>
               </div>
           </div>
-      </div>
 
-      <div class="EOG graphbox">
-          <div class = "card">
-          <h1>EOG</h1>
+          <div class = "cardsignal">
+<!--          <h2>EOG</h2>-->
               <div>
                 <div id="EOG"> </div>
               </div>
           </div>
-      </div>
 
-      <div class="EMG graphbox">
-          <div class = "card">
-          <h1>EMG</h1>
+          <div class = "cardsignal">
+<!--          <h2>EMG</h2>-->
               <div>
                 <div id="EMG"> </div>
               </div>
           </div>
-      </div>
 
-    <div class="Resp-Oro-Nasal graphbox">
-          <div class = "card">
-          <h1>EMG</h1>
+          <div class = "cardsignal">
+<!--          <h2>Resp-Oro-Nasal</h2>-->
               <div>
                 <div id="Resp-Oro-Nasal"> </div>
               </div>
           </div>
-      </div>
 
-    <div class="Temp graphbox">
-          <div class = "card">
-          <h1>Temp</h1>
+          <div class = "cardsignal">
+<!--          <h2>Temp</h2>-->
               <div>
                 <div id="Temp"> </div>
               </div>
           </div>
-    </div>
+<!--      </div>-->
 
-      <div class = "card">
-        <h1> Select Signal to Display in the space below </h1>
-        <select id="Grad">
-            <option>Choose Signal to Display</option>
-            <option value="EEG-FPZ-CZ-Grad">EEG-FPZ-CZ Saliency</option>
-            <option value="EEG-PZ-OZ-Grad">EEG-PZ-OZ Saliency</option>
-            <option value="EOG-Grad">EOG Saliency</option>
-            <option value="EMG-Grad">EMG Saliency</option>
-            <option value="Resp-Oro-Nasal-Grad">Resp-Oro-Nasal Saliency</option>
-            <option value="Temp-Grad">Temp Saliency</option>
-        </select>
-    </div>
+<!--      <div class = "card">-->
+<!--          <h1>Saliency Maps in EEG-FPZ-CZ</h1>-->
+<!--              <div>-->
+<!--                <div id="EEG-FPZ-CZ-Grad"> </div>-->
+<!--              </div>-->
 
-      <div class="EEG-FPZ-CZ-Grad gradbox">
-          <div class = "card">
-          <h1>Saliency Maps in EEG-FPZ-CZ</h1>
-              <div>
-                <div id="EEG-FPZ-CZ-Grad"> </div>
-              </div>
-          </div>
-      </div>
+<!--          <div class = "card">-->
+<!--          <h1>Saliency Maps in EEG-PZ-OZ</h1>-->
+<!--              <div>-->
+<!--                <div id="EEG-PZ-OZ-Grad"> </div>-->
+<!--              </div>-->
+<!--          </div>-->
 
-      <div class="EEG-PZ-OZ-Grad gradbox">
-          <div class = "card">
-          <h1>Saliency Maps in EEG-PZ-OZ</h1>
-              <div>
-                <div id="EEG-PZ-OZ-Grad"> </div>
-              </div>
-          </div>
-      </div>
+<!--          <div class = "card">-->
+<!--          <h1>Saliency Maps in EOG</h1>-->
+<!--              <div>-->
+<!--                <div id="EOG-Grad"> </div>-->
+<!--              </div>-->
+<!--          </div>-->
 
-      <div class="EOG-Grad gradbox">
-          <div class = "card">
-          <h1>Saliency Maps in EOG</h1>
-              <div>
-                <div id="EOG-Grad"> </div>
-              </div>
-          </div>
-      </div>
+<!--          <div class = "card">-->
+<!--          <h1>Saliency Maps in Resp-Oro-Nasal</h1>-->
+<!--              <div>-->
+<!--                <div id="Resp-Oro-Nasal-Grad"> </div>-->
+<!--              </div>-->
+<!--          </div>-->
 
-      <div class="Resp-Oro-Nasal-Grad gradbox">
-          <div class = "card">
-          <h1>Saliency Maps in Resp-Oro-Nasal</h1>
-              <div>
-                <div id="Resp-Oro-Nasal-Grad"> </div>
-              </div>
-          </div>
-      </div>
+<!--          <div class = "card">-->
+<!--          <h1>Saliency Maps in EMG</h1>-->
+<!--              <div>-->
+<!--                <div id="EMG-Grad"> </div>-->
+<!--              </div>-->
+<!--          </div>-->
 
-      <div class="EMG-Grad gradbox">
-          <div class = "card">
-          <h1>Saliency Maps in EMG</h1>
-              <div>
-                <div id="EMG-Grad"> </div>
-              </div>
-          </div>
-      </div>
-
-      <div class="Temp-Grad gradbox">
-          <div class = "card">
-          <h1>Saliency Maps in Temp</h1>
-              <div>
-                <div id="Temp-Grad"> </div>
-              </div>
-          </div>
-      </div>
+<!--          <div class = "card">-->
+<!--          <h1>Saliency Maps in Temp</h1>-->
+<!--              <div>-->
+<!--                <div id="Temp-Grad"> </div>-->
+<!--              </div>-->
+<!--          </div>-->
+<!--      </div>-->
 
       <div class="card">
           <h1>Spectrogram</h1>
-          <img id="spectrogram" alt="Spectrogram" style="width: 95%">
+          <img id="spectrogram" alt="Spectrogram" style="width: 1170px">
       </div>
 
       <div class="card">
@@ -296,20 +225,15 @@ $(document).ready(function(){
 
         <div class = "card">
         <h1> Select PSD to Display in the space below </h1>
-        <select id="PSD">
-            <option>Choose PSD to Display</option>
-            <option value="EEG-FPZ-CZ-PSD">EEG-FPZ-CZ PSD</option>
-            <option value="EEG-PZ-OZ-PSD">EEG-PZ-OZ PSD</option>
-<!--            <option value="EOG-PSD">EOG PSD</option>-->
-<!--            <option value="EMG-PSD">EMG PSD</option>-->
-<!--            <option value="Resp-Oro-Nasal-PSD">Resp-Oro-Nasal PSD</option>-->
-<!--            <option value="Temp-PSD">Temp PSD</option>-->
-        </select>
-    </div>
+            <select id="PSD">
+                <option>Choose PSD to Display</option>
+                <option value="EEG-FPZ-CZ-PSD">EEG-FPZ-CZ PSD</option>
+                <option value="EEG-PZ-OZ-PSD">EEG-PZ-OZ PSD</option>
+            </select>
+        </div>
 
       <div class="EEG-FPZ-CZ-PSD psdbox">
           <div class = "card">
-<!--          <h1>PSD of EEG-FPZ-CZ</h1>-->
               <div>
                 <div id="EEG-FPZ-CZ-PSD"> </div>
               </div>
@@ -317,58 +241,35 @@ $(document).ready(function(){
       </div>
       <div class="EEG-PZ-OZ-PSD psdbox">
           <div class = "card">
-<!--          <h1>PSD of EEG-PZ-OZ</h1>-->
               <div>
                 <div id="EEG-PZ-OZ-PSD"> </div>
               </div>
           </div>
       </div>
-<!--      <div class="EOG-PSD psdbox">-->
-<!--          <div class = "card">-->
-<!--&lt;!&ndash;          <h1>PSD of EOG</h1>&ndash;&gt;-->
-<!--              <div>-->
-<!--                <div id="EOG-PSD"> </div>-->
-<!--              </div>-->
-<!--          </div>-->
-<!--      </div>-->
-<!--      <div class="Resp-Oro-Nasal-PSD psdbox">-->
-<!--          <div class = "card">-->
-<!--&lt;!&ndash;          <h1>PSD of Resp-Oro-Nasal</h1>&ndash;&gt;-->
-<!--              <div>-->
-<!--                <div id="Resp-Oro-Nasal-PSD"> </div>-->
-<!--              </div>-->
-<!--          </div>-->
-<!--      </div>-->
-<!--      <div class="EMG-PSD psdbox">-->
-<!--          <div class = "card">-->
-<!--&lt;!&ndash;          <h1>PSD of EMG</h1>&ndash;&gt;-->
-<!--              <div>-->
-<!--                <div id="EMG-PSD"> </div>-->
-<!--              </div>-->
-<!--          </div>-->
-<!--      </div>-->
-<!--      <div class="Temp-PSD psdbox">-->
-<!--          <div class = "card">-->
-<!--&lt;!&ndash;          <h1>PSD of Temp</h1>&ndash;&gt;-->
-<!--              <div>-->
-<!--                <div id="Temp-PSD"> </div>-->
-<!--              </div>-->
-<!--          </div>-->
-<!--      </div>-->
 
-<!--      <h2>Power Spectral Analysis</h2>-->
-<!--      <h3> EEG-FPZ-CZ </h3>-->
-<!--&lt;!&ndash;      <p>Space for the researcher to make comments</p>&ndash;&gt;-->
-<!--        <div id="PSD-FPZCZ"></div>-->
+        <div class = "card">
+        <h1> Select FFT to Display in the space below </h1>
+            <select id="FFT">
+                <option>Choose FFT to Display</option>
+                <option value="EEG-FPZ-CZ-FFT">EEG-FPZ-CZ FFT</option>
+                <option value="EEG-PZ-OZ-FFT">EEG-PZ-OZ FFT</option>
+            </select>
+        </div>
 
-<!--      <h3> EEG-PZ-OZ </h3>-->
-<!--      <p>Space for the researcher to make comments</p>-->
-<!--      <div id="PSD-PZOZ"></div>-->
-
-      <h2>Fast Fourier Transform</h2>
-      <h3> EEG-FPZ-CZ </h3>
-<!--      <p>Space for the researcher to make comments</p>-->
-        <div id="FFT-FPZCZ"></div>
+      <div class="EEG-FPZ-CZ-FFT fftbox">
+          <div class = "card">
+              <div>
+                <div id="EEG-FPZ-CZ-FFT"> </div>
+              </div>
+          </div>
+      </div>
+      <div class="EEG-PZ-OZ-FFT fftbox">
+          <div class = "card">
+              <div>
+                <div id="EEG-PZ-OZ-FFT"> </div>
+              </div>
+          </div>
+      </div>
 
     </div>
 
@@ -391,22 +292,21 @@ $(document).ready(function(){
     </div>
   </div>
 </div>
-<!--<script src="sleepstagefc.js"></script>-->
+
 <script src="sleepstage.js"></script>
 <script src="sleepprob.js"></script>
 <script src="signals.js"></script>
 <script src="psd.js"></script>
 <script>
-    // var chartDiv = document.getElementById('none');
     var clientWidth = 1200;
-    var clientHeight = 200;
+    var clientHeight = 100;
     sleepstage();
     socket.on('SleepStage', function (fulldata) {
         redraw_psd(fulldata.psd_fpzcz, 'EEG-FPZ-CZ');
         redraw_psd(fulldata.psd_pzoz, 'EEG-PZ-OZ');
         redraw_sleepprob(fulldata.sleepprob);
-        redraw_eeg(fulldata.eeg_fpzcz, 'eeg-fpzcz', clientWidth, clientHeight);
-        redraw_eeg(fulldata.eeg_pzoz, 'eeg-pzoz', clientWidth, clientHeight);
+        redraw_eeg(fulldata.eeg_fpzcz, 'EEG-FPZ-CZ', clientWidth, clientHeight);
+        redraw_eeg(fulldata.eeg_pzoz, 'EEG-PZ-OZ', clientWidth, clientHeight);
         redraw_grad(fulldata.eeg_fpzcz_grad,'EEG-FPZ-CZ', clientWidth, clientHeight);
         redraw_grad(fulldata.eeg_pzoz_grad,'EEG-PZ-OZ', clientWidth, clientHeight);
         redraw_grad(fulldata.eog_grad, 'EOG', clientWidth, clientHeight);
@@ -417,7 +317,8 @@ $(document).ready(function(){
         redraw_signal(fulldata.emg, 'EMG', clientWidth, clientHeight);
         redraw_signal(fulldata.resp, 'Resp-Oro-Nasal', clientWidth, clientHeight);
         redraw_signal(fulldata.temp, 'Temp', clientWidth, clientHeight);
-        redraw_fft(fulldata.fft_fpzcz, 'FFT-FPZCZ');
+        redraw_fft(fulldata.fft_fpzcz, 'EEG-FPZ-CZ');
+        redraw_fft(fulldata.fft_pzoz, 'EEG-PZ-OZ');
         d = new Date();
         $("#spectrogram").attr("src", "eeg_fpzcz_specgram.png?"+d.getTime());
     });
