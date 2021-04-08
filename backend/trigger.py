@@ -20,25 +20,59 @@ os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.environ["TZ"] = "US/Eastern"
 qu = Queue.Queue()
 
+class RepeatedTimer(object):
+    def __init__(self, interval, function, *args, **kwargs):
+        self._timer = None
+        self.interval = interval
+        self.function = function
+        self.args = args
+        self.kwargs = kwargs
+        self.is_running = False
+        self.next_call = time.time()
+        self.start()
+
+    def _run(self):
+        self.is_running = False
+        self.start()
+        self.function(*self.args, **self.kwargs)
+
+    def start(self):
+        if not self.is_running:
+            self.next_call += self.interval
+            self._timer = threading.Timer(self.next_call - time.time(), self._run)
+            self._timer.start()
+            self.is_running = True
+
+    def stop(self):
+        self._timer.cancel()
+        self.is_running = False
+
 
 def nodeserv(transfdata, cn):
     # tfdata = transfdata.values.tolist()
     tfdatajson = json.dumps(transfdata)
+    print("Sending data")
     cn.send(bytes(tfdatajson, encoding='utf8'))
 
 def main():
     count = 600
+
+    count_json = {}
+    count_json["data"]=count
+
+    with open('../frontend/data/count.json', 'w') as f:
+        f.write(str(count_json).replace('\'', '"'))
+    
     sn = socket.socket()
     hostn = 'localhost'
     portn = 14564
     sn.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    print("before binding")
     sn.bind((hostn, portn))
     print('Server Started')
     sn.listen(5)
     cn, addrn = sn.accept()
     print('Got connection from', addrn)
-    
-
     mapping = {0: 'Wake', 1: 'N1', 2: 'N2', 3: 'N3', 4: 'REM'}
     # hyp = {0: 4, 1: 2, 2: 1, 3: 0, 4: 3}
     channels = {0: 'EEG-FPZ-CZ', 1: 'EEG-PZ-OZ', 2: 'EOG', 3: 'Resp-Oro-Nasal', 4: 'EMG', 5: 'Temp'}
@@ -56,18 +90,20 @@ def main():
 
     np.savez(save_path, **save_dict)
 
+    cn.recv(1024) 
+    rt = RepeatedTimer(30, func, qu)  # it auto-starts, no need of rt.start()
     while True:
+        
         print("Epoch Number: ", count)
         save_dict = {
             'x': data[count, :, :],
             'y': labels[count]}
         np.savez(save_path, **save_dict)
-        func(qu)
         dict_temp = qu.get()
 
         grads = dict_temp["grads"]
         sleepstage = dict_temp["Y_pred"]
-        print("Sleep Stage is:"+str(sleepstage))
+        print(sleepstage)
 
         json_data = data[count, :, :]
 
@@ -303,11 +339,24 @@ def main():
         all_rows = []
         for i in range(len(xf)):
             row = {}
-            row["x"] = xf[i]
-            row["y"] = np.abs(yf[i])
+            row["Frequencies"] = xf[i]
+            row["FFT"] = np.abs(yf[i])
             all_rows.append(row)
 
         with open('../frontend/data/FFT-FPZCZ.json', 'w') as f:
+            f.write(str(all_rows).replace('\'', '"'))
+
+        yf = rfft(json_data_eeg_pzoz)
+        xf = rfftfreq(N, 1 / SAMPLE_RATE)
+
+        all_rows = []
+        for i in range(len(xf)):
+            row = {}
+            row["Frequencies"] = xf[i]
+            row["FFT"] = np.abs(yf[i])
+            all_rows.append(row)
+
+        with open('../frontend/data/FFT-PZOZ.json', 'w') as f:
             f.write(str(all_rows).replace('\'', '"'))
 
         count_json = {}
@@ -328,9 +377,17 @@ def main():
         # nodeserv(hyp[int(sleepstage)], cn)
         nodeserv(int(sleepstage), cn)
         count += 1
+        count_json = {}
+        count_json["data"]=count
+        
+        with open('../frontend/data/count.json', 'w') as f:
+            f.write(str(count_json).replace('\'', '"'))
         qu.task_done()
-        cn.recv(2048) # When it recives 'next' signal from server.js, this gets unblocked 
-    
+
+    try:
+        sleep(150)  # your long-running job goes here
+    finally:
+        rt.stop()  # better in a try/finally block to make sure the program ends
 
 
 if __name__ == "__main__":

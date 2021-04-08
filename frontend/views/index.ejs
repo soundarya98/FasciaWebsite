@@ -66,13 +66,64 @@
     });
 }
 
+
+
+let myVar;
+
 function getNext(){
-    socket.emit("Next", "next");
+    socket.emit("Next", {});
+}
+function getPrev(){
+    socket.emit("Prev", {});
+}
+function getNextForButton(){
+    clearInterval(myVar);
+    getNext();
+    myVar = setInterval(getNext, 30000);
+}
+function getPrevForButton(){
+    clearInterval(myVar);
+    getPrev();
+    myVar = setInterval(getNext, 30000);
+}
+function pause(){
+    clearInterval(myVar);
+}
+function play(){
+    myVar = setInterval(getNext, 30000);
 }
 
-function getPrev(){
-    socket.emit("Prev", "prev");
-}
+$(document).ready(function(){
+        getNext();
+        myVar = setInterval(getNext, 30000);
+        $("#play").click(function () {
+            play();
+            $("#info").html('<p>Response will change every 30s. Press Pause to stop.</p>')
+        }) ; 
+        $("#pause").click(function () {
+            pause();
+            $("#info").html('<p>Response paused. Press Play to proceed.</p>')
+        }) ; 
+        $("#prev").click(function () {
+            getPrevForButton();
+            $("#info").html('<p>Response will change every 30s. Press Pause to stop.</p>')
+        }) ; 
+        $("#next").click(function () {
+            getNextForButton();
+            $("#info").html('<p>Response will change every 30s. Press Pause to stop.</p>')
+        }) ; 
+});
+
+// $(document).ready(function(){
+//         $("#page").hide() ; 
+//         setTimeout(() => {
+//             $("#page").show() ; 
+//             $("#waitpage").hide() ; 
+//             myVar = setInterval(getNext, 30000);
+//         }, 120000);
+// });
+
+
 
 $(document).ready(function(){
     $("#Signals").change(function(){
@@ -124,7 +175,6 @@ $(document).ready(function(){
         });
     }).change();
 });
-
 </script>
 
 </head>
@@ -133,17 +183,23 @@ $(document).ready(function(){
 <!--<div class="header">-->
 <!--  <h1>FASCIA</h1>-->
 <!--</div>-->
-
+<!-- <h1 id="waitpage"> Wait for 2 mins ....</h1> -->
+<div id="page">
 <div class="topnav">
   <a href="#">Welcome <%= username %>!</a>
   <a href="#">Researcher</a>
   <a href="#">User</a>
 </div>
 <!-- Adding next and prev button -->
+
 <div id="getdata"> 
-    <button class="button" onclick="getPrev()">Prev</button>
-    <p>Navigate</p>
-    <button class="button" onclick="getNext()">Next</button>
+    <button id="pause" class="button" >Pause</button>
+    <button id="play" class="button" >Play</button>
+    <button id="prev" class="button" >Prev</button>
+    <!-- <button class="button" onclick="">10m</button>
+    <button class="button" onclick="">voll</button> -->
+    <button id="next" class="button" >Next</button>
+    <p id="info">Response will change every 30s. Press Pause to stop.</p>
 </div>
 <div class="row">
   <div class="leftcolumn">
@@ -404,6 +460,7 @@ $(document).ready(function(){
     </div>
   </div>
 </div>
+</div>
 <!--<script src="sleepstagefc.js"></script>-->
 <script src="sleepstage.js"></script>
 <script src="sleepprob.js"></script>
@@ -432,8 +489,10 @@ $(document).ready(function(){
         redraw_signal(fulldata.temp, 'Temp', clientWidth, clientHeight);
         redraw_fft(fulldata.fft_fpzcz, 'FFT-FPZCZ');
         d = new Date();
+
         $("#spectrogram").attr("src", "eeg_fpzcz_specgram.png?"+d.getTime());
     });
+    
 </script>
 </body>
 </html>
