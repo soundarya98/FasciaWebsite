@@ -4,8 +4,7 @@ function redraw_eeg(data, channel, clientWidth, clientHeight) {
     var svg = d3.select(chartDiv).append("svg").attr("id", "svg-" + channel);
 
     var margin = {top: 10, right: 0, bottom: 30, left: 20};
-    // var width = chartDiv.clientWidth - margin.left - margin.right;
-    // var height = chartDiv.clientHeight - margin.bottom;
+
     var width = clientWidth - margin.left - margin.right;
     var height = clientHeight - margin.bottom;
 
@@ -43,7 +42,7 @@ function redraw_eeg(data, channel, clientWidth, clientHeight) {
     });
 
     var keys_ = null;
-    if(channel == 'eeg-fpzcz'){
+    if(channel == 'EEG-FPZ-CZ'){
          keys_ =   ["EEG_FPZ_CZ", "EEG_FPZ_CZ_Spindle", "EEG_FPZ_CZ_Slow Waves"];
     }
 
@@ -90,18 +89,21 @@ function redraw_eeg(data, channel, clientWidth, clientHeight) {
         .attr("transform", "translate(0," + [height - margin.bottom] + ")")
         .call(d3.axisBottom(x));
 
+    console.log("HERE")
+
     // Create Y Axis
     // Add Text label to Y axis
     g.append("g")
-        .attr("class", "axis axis--y")
-        .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(y))
+        // .attr("class", "axis axis--y")
+        // .attr("transform", `translate(${margin.left},0)`)
+        // .call(d3.axisLeft(y))
         .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", "0.71em")
+        // .attr("transform", "rotate(-90)")
+        .attr("y", 0)
+        .attr("dy", "0.31em")
         .attr("fill", "#000")
-        .text("Voltage, mV");
+        .text(channel);
+
 
     // Create a <g> element for each row
     var row = g.selectAll(".row")
@@ -126,26 +128,26 @@ function redraw_eeg(data, channel, clientWidth, clientHeight) {
       .domain(["EEG", "Spindle", "Slow Waves"])
       .range(d3.schemeCategory10);
 
-    row.selectAll("mydots")
-      .data(["EEG", "Spindle", "Slow Waves"])
-      .enter()
-      .append("circle")
-        .attr("cx", function(d,i){ return 0 + i*65})
-        .attr("cy", -20)
-        .attr("r", 7)
-        // .style("fill", color2(3));
-        .style("fill", function(d){ return color(d)});
+    // row.selectAll("mydots")
+    //   .data(["EEG", "Spindle", "Slow Waves"])
+    //   .enter()
+    //   .append("circle")
+    //     .attr("cx", function(d,i){ return 0 + i*65})
+    //     .attr("cy", -20)
+    //     .attr("r", 7)
+    //     // .style("fill", color2(3));
+    //     .style("fill", function(d){ return color(d)});
 
-    row.selectAll("mylabels")
-        .data(["EEG", "Spindle", "Slow Waves"])
-        .enter()
-        .append("text")
-        .attr("x", function(d,i){ return 10 + i*65})
-        .attr("y", -20)
-        .style("fill", function(d){ return color(d)})
-        .text(function(d){ return d})
-        .attr("text-anchor", "left")
-        .style("alignment-baseline", "middle")
+    // row.selectAll("mylabels")
+    //     .data(["EEG", "Spindle", "Slow Waves"])
+    //     .enter()
+    //     .append("text")
+    //     .attr("x", function(d,i){ return 10 + i*65})
+    //     .attr("y", -20)
+    //     .style("fill", function(d){ return color(d)})
+    //     .text(function(d){ return d})
+    //     .attr("text-anchor", "left")
+    //     .style("alignment-baseline", "middle")
 };
 
 function redraw_signal(data, channel, clientWidth, clientHeight) {
@@ -235,15 +237,15 @@ function redraw_signal(data, channel, clientWidth, clientHeight) {
     // Create Y Axis
     // Add Text label to Y axis
     g.append("g")
-        .attr("class", "axis axis--y")
-        .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(y))
+        // .attr("class", "axis axis--y")
+        // .attr("transform", `translate(${margin.left},0)`)
+        // .call(d3.axisLeft(y))
         .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", "0.71em")
+        // .attr("transform", "rotate(-90)")
+        .attr("y", 0)
+        .attr("dy", "0.31em")
         .attr("fill", "#000")
-        .text("Voltage, mV");
+        .text(channel);
 
     // Create a <g> element for each row
     var row = g.selectAll(".row")
@@ -377,18 +379,18 @@ function redraw_grad(data, channel, clientWidth, clientHeight) {
         .attr("transform", "translate(0," + [height - margin.bottom] + ")")
         .call(d3.axisBottom(x));
 
-    // Create Y Axis
-    // Add Text label to Y axis
-    g.append("g")
-        .attr("class", "axis axis--y")
-        .attr("transform", `translate(${margin.left},0)`)
-        .call(d3.axisLeft(y))
-        .append("text")
-        .attr("transform", "rotate(-90)")
-        .attr("y", 6)
-        .attr("dy", "0.71em")
-        .attr("fill", "#000000")
-        .text("Voltage, mV");
+    // // Create Y Axis
+    // // Add Text label to Y axis
+    // g.append("g")
+    //     .attr("class", "axis axis--y")
+    //     .attr("transform", `translate(${margin.left},0)`)
+    //     .call(d3.axisLeft(y))
+    //     .append("text")
+    //     .attr("transform", "rotate(-90)")
+    //     .attr("y", 6)
+    //     .attr("dy", "0.71em")
+    //     .attr("fill", "#000000")
+    //     .text("Voltage, mV");
 
     // Create a <g> element for each row
     var row = g.selectAll(".row")

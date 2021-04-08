@@ -50,6 +50,11 @@ app.get("/index", isLoggedIn, function (req, res) {
     res.render('index.ejs', { username: req.user.username });    
 });
 
+//Showing all-signal interface
+app.get("/index_all", function (req, res) {
+    res.render("index_all");
+});
+
 // Showing register form
 app.get("/register", function (req, res) {
     res.render("register");
@@ -163,6 +168,30 @@ io.on('connection', (socket) =>
         let rawfft_fpzcz = fs.readFileSync('data/FFT-FPZCZ.json');
         let fft_fpzcz = JSON.parse(rawfft_fpzcz);
 
+        let rawfft_pzoz = fs.readFileSync('data/FFT-PZOZ.json');
+        let fft_pzoz = JSON.parse(rawfft_pzoz);
+
+        // socket.emit('SleepStage',
+        //     {
+        //         psd_fpzcz: psd_fpzcz,
+        //         psd_pzoz: psd_pzoz,
+        //         sleepprob: sleepprob,
+        //         stage: sleepstage,
+        //         eeg_fpzcz: eeg_fpzcz,
+        //         eeg_pzoz: eeg_pzoz,
+        //         eeg_fpzcz_grad: eeg_fpzcz_grad,
+        //         eeg_pzoz_grad: eeg_pzoz_grad,
+        //         eog_grad: eog_grad,
+        //         resp_grad: resp_grad,
+        //         emg_grad: emg_grad,
+        //         temp_grad: temp_grad,
+        //         eog:eog,
+        //         resp:resp,
+        //         emg:emg,
+        //         fft_fpzcz: fft_fpzcz,
+        //         fft_pzoz: fft_pzoz,
+        //         temp:temp
+        //     });
 
         MongoClient.connect(url, function(err, db) {
           if (err) throw err;
@@ -264,6 +293,9 @@ io.on('connection', (socket) =>
         let rawfft_fpzcz = fs.readFileSync('data/FFT-FPZCZ.json');
         let fft_fpzcz = JSON.parse(rawfft_fpzcz);
 
+        let rawfft_pzoz = fs.readFileSync('data/FFT-PZOZ.json');
+        let fft_pzoz = JSON.parse(rawfft_pzoz);
+
         socket.emit('SleepStage',
             {
                 psd_fpzcz: psd_fpzcz,
@@ -282,6 +314,7 @@ io.on('connection', (socket) =>
                 resp:resp,
                 emg:emg,
                 fft_fpzcz: fft_fpzcz,
+                fft_pzoz: fft_pzoz,
                 temp:temp
             });
     });
