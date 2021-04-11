@@ -8,7 +8,7 @@ function redraw_sleepprob(data, channel, clientWidth, clientHeight) {
     // width = parseInt(d3.select("#" + "svg-sleepprob").style("width")) - margin.left - margin.right;
     var width = 400;
     var height = 200;
-
+ 
 // set the ranges
   var x = d3.scaleBand()
       .range([0, width])
