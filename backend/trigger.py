@@ -90,7 +90,7 @@ def main():
 
     np.savez(save_path, **save_dict)
 
-    cn.recv(1024) 
+    # cn.recv(1024) 
     rt = RepeatedTimer(30, func, qu)  # it auto-starts, no need of rt.start()
     while True:
         

@@ -65,13 +65,15 @@
 
 
 
-let myVar;
+let myVar, saliency = true, spindel = true, slowWave = true, offset = 600;
 
 function getNext(){
-    socket.emit("Next", {});
+    offset++ ;
+    socket.emit("Change", {offset:offset});
 }
 function getPrev(){
-    socket.emit("Prev", {});
+    offset-- ;
+    socket.emit("Change", {offset:offset});
 }
 function getNextForButton(){
     clearInterval(myVar);
@@ -87,6 +89,17 @@ function pause(){
     clearInterval(myVar);
 }
 function play(){
+    myVar = setInterval(getNext, 30000);
+}
+function go() {
+    clearInterval(myVar);
+    offset = Number(document.querySelector("#getdataposition input").value);
+    socket.emit("Change", {offset:offset});
+    myVar = setInterval(getNext, 30000);
+}
+function current() {
+    clearInterval(myVar);
+    socket.emit("Change", {offset:offset});
     myVar = setInterval(getNext, 30000);
 }
 
@@ -109,6 +122,36 @@ $(document).ready(function(){
             getNextForButton();
             $("#info").html('<p>Response will change every 30s. Press Pause to stop.</p>')
         }) ; 
+        $("#go").click(function () {
+            go();
+        }); 
+        $("#saliency").click(function () {
+            console.log(this,"clicked");
+            if ($(this).is(":checked")) {
+                saliency = true ;
+            } else {
+                saliency = false ;
+            }
+            current();
+        });
+        $("#slowwave").click(function () {
+            console.log(this,"clicked");
+            if ($(this).is(":checked")) {
+                slowWave = true ; 
+            } else {
+                slowWave = false ;
+            }
+            current();
+        });
+        $("#spindel").click(function () {
+            console.log(this,"clicked");
+            if ($(this).is(":checked")) {
+                spindel = true ;
+            } else {
+                spindel = false ;
+            }
+            current(); 
+        });
 });
 
 // $(document).ready(function(){
@@ -178,10 +221,26 @@ $(document).ready(function(){
     <button id="pause" class="button" >Pause</button>
     <button id="play" class="button" >Play</button>
     <button id="prev" class="button" >Prev</button>
-    <!-- <button class="button" onclick="">10m</button>
-    <button class="button" onclick="">voll</button> -->
     <button id="next" class="button" >Next</button>
     <p id="info">Response will change every 30s. Press Pause to stop.</p>
+</div>
+<div id="getdataposition"> 
+    <input type="number" step="1" min="601" max="1000" />
+    <button id="go" class="button"  >Go!</button>
+</div>
+<div id="checkboxes"> 
+    <label for="saliency">Saliency</label>
+    <input type="checkbox" id="saliency" name="saliency"
+         checked>
+    
+    <label for="slowwave">SlowWave</label>
+    <input type="checkbox" id="slowwave" name="slowwave"
+         checked>
+    
+    <label for="spindel">Spindel</label>
+    <input type="checkbox" id="spindel" name="spindel"
+         checked>
+    
 </div>
 <div class="row">
   <div class="leftcolumn">
@@ -378,15 +437,18 @@ $(document).ready(function(){
     socket.on('SleepStage', function (fulldata) {
         redraw_psd(fulldata.psd_fpzcz, 'EEG-FPZ-CZ');
         redraw_psd(fulldata.psd_pzoz, 'EEG-PZ-OZ');
+        
         redraw_sleepprob(fulldata.sleepprob);
-        redraw_eeg(fulldata.eeg_fpzcz, 'EEG-FPZ-CZ', clientWidth, clientHeight);
-        redraw_eeg(fulldata.eeg_pzoz, 'EEG-PZ-OZ', clientWidth, clientHeight);
-        redraw_grad(fulldata.eeg_fpzcz_grad,'EEG-FPZ-CZ', clientWidth, clientHeight);
-        redraw_grad(fulldata.eeg_pzoz_grad,'EEG-PZ-OZ', clientWidth, clientHeight);
-        redraw_grad(fulldata.eog_grad, 'EOG', clientWidth, clientHeight);
-        redraw_grad(fulldata.resp_grad,'Resp-Oro-Nasal',  clientWidth, clientHeight);
-        redraw_grad(fulldata.emg_grad, 'EMG', clientWidth, clientHeight);
-        redraw_grad(fulldata.temp_grad, 'Temp', clientWidth, clientHeight);
+        redraw_eeg(fulldata.eeg_fpzcz, 'EEG-FPZ-CZ', clientWidth, clientHeight, slowWave, spindel);
+        redraw_eeg(fulldata.eeg_pzoz, 'EEG-PZ-OZ', clientWidth, clientHeight, slowWave, spindel);
+        
+        redraw_grad(fulldata.eeg_fpzcz_grad,'EEG-FPZ-CZ', clientWidth, clientHeight, saliency);
+        redraw_grad(fulldata.eeg_pzoz_grad,'EEG-PZ-OZ', clientWidth, clientHeight, saliency);
+        redraw_grad(fulldata.eog_grad, 'EOG', clientWidth, clientHeight, saliency);
+        redraw_grad(fulldata.resp_grad,'Resp-Oro-Nasal',  clientWidth, clientHeight, saliency);
+        redraw_grad(fulldata.emg_grad, 'EMG', clientWidth, clientHeight, saliency);
+        redraw_grad(fulldata.temp_grad, 'Temp', clientWidth, clientHeight, saliency);
+        
         redraw_signal(fulldata.eog, 'EOG', clientWidth, clientHeight);
         redraw_signal(fulldata.emg, 'EMG', clientWidth, clientHeight);
         redraw_signal(fulldata.resp, 'Resp-Oro-Nasal', clientWidth, clientHeight);
