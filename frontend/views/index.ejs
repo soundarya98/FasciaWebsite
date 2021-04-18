@@ -65,7 +65,7 @@
 
 
 
-let myVar, saliency = true, spindel = true, slowWave = true, offset = 600;
+let myVar, saliency = true, spindle = true, slowWave = true, offset = 600;
 
 function getNext(){
     offset++ ;
@@ -104,8 +104,8 @@ function current() {
 }
 
 $(document).ready(function(){
-        getNext();
-        myVar = setInterval(getNext, 30000);
+        // getNext();
+        myVar = setInterval(getNext, 90000);
         $("#play").click(function () {
             play();
             $("#info").html('<p>Response will change every 30s. Press Pause to stop.</p>')
@@ -143,12 +143,12 @@ $(document).ready(function(){
             }
             current();
         });
-        $("#spindel").click(function () {
+        $("#spindle").click(function () {
             console.log(this,"clicked");
             if ($(this).is(":checked")) {
-                spindel = true ;
+                spindle = true ;
             } else {
-                spindel = false ;
+                spindle = false ;
             }
             current(); 
         });
@@ -233,12 +233,12 @@ $(document).ready(function(){
     <input type="checkbox" id="saliency" name="saliency"
          checked>
     
-    <label for="slowwave">SlowWave</label>
+    <label for="slowwave">Slow Waves</label>
     <input type="checkbox" id="slowwave" name="slowwave"
          checked>
     
-    <label for="spindel">Spindel</label>
-    <input type="checkbox" id="spindel" name="spindel"
+    <label for="spindle">Spindles</label>
+    <input type="checkbox" id="spindle" name="spindle"
          checked>
     
 </div>
@@ -437,22 +437,27 @@ $(document).ready(function(){
     socket.on('SleepStage', function (fulldata) {
         redraw_psd(fulldata.psd_fpzcz, 'EEG-FPZ-CZ');
         redraw_psd(fulldata.psd_pzoz, 'EEG-PZ-OZ');
+
+        let ms = 1000 * 60 * 0.5; // convert minutes to ms
+        let now = new Date();
+        now = Math.round(now.getTime() / ms) * ms;
+        console.log("now", now);
+        console.log("nowtime", new Date(now));
+        redraw_sleepprob(fulldata.sleepprob, now);
+        redraw_eeg(fulldata.eeg_fpzcz, 'EEG-FPZ-CZ', clientWidth, clientHeight, slowWave, spindle, saliency, now);
+        redraw_eeg(fulldata.eeg_pzoz, 'EEG-PZ-OZ', clientWidth, clientHeight, slowWave, spindle, saliency, now);
         
-        redraw_sleepprob(fulldata.sleepprob);
-        redraw_eeg(fulldata.eeg_fpzcz, 'EEG-FPZ-CZ', clientWidth, clientHeight, slowWave, spindel);
-        redraw_eeg(fulldata.eeg_pzoz, 'EEG-PZ-OZ', clientWidth, clientHeight, slowWave, spindel);
+        // redraw_grad(fulldata.eeg_fpzcz_grad,'EEG-FPZ-CZ', clientWidth, clientHeight, saliency);
+        // redraw_grad(fulldata.eeg_pzoz_grad,'EEG-PZ-OZ', clientWidth, clientHeight, saliency);
+        // redraw_grad(fulldata.eog_grad, 'EOG', clientWidth, clientHeight, saliency);
+        // redraw_grad(fulldata.resp_grad,'Resp-Oro-Nasal',  clientWidth, clientHeight, saliency);
+        // redraw_grad(fulldata.emg_grad, 'EMG', clientWidth, clientHeight, saliency);
+        // redraw_grad(fulldata.temp_grad, 'Temp', clientWidth, clientHeight, saliency);
         
-        redraw_grad(fulldata.eeg_fpzcz_grad,'EEG-FPZ-CZ', clientWidth, clientHeight, saliency);
-        redraw_grad(fulldata.eeg_pzoz_grad,'EEG-PZ-OZ', clientWidth, clientHeight, saliency);
-        redraw_grad(fulldata.eog_grad, 'EOG', clientWidth, clientHeight, saliency);
-        redraw_grad(fulldata.resp_grad,'Resp-Oro-Nasal',  clientWidth, clientHeight, saliency);
-        redraw_grad(fulldata.emg_grad, 'EMG', clientWidth, clientHeight, saliency);
-        redraw_grad(fulldata.temp_grad, 'Temp', clientWidth, clientHeight, saliency);
-        
-        redraw_signal(fulldata.eog, 'EOG', clientWidth, clientHeight);
-        redraw_signal(fulldata.emg, 'EMG', clientWidth, clientHeight);
-        redraw_signal(fulldata.resp, 'Resp-Oro-Nasal', clientWidth, clientHeight);
-        redraw_signal(fulldata.temp, 'Temp', clientWidth, clientHeight);
+        redraw_signal(fulldata.eog, 'EOG', clientWidth, clientHeight, now);
+        redraw_signal(fulldata.emg, 'EMG', clientWidth, clientHeight, now);
+        redraw_signal(fulldata.resp, 'Resp-Oro-Nasal', clientWidth, clientHeight, now);
+        redraw_signal(fulldata.temp, 'Temp', clientWidth, clientHeight, now);
         redraw_fft(fulldata.fft_fpzcz, 'EEG-FPZ-CZ');
         redraw_fft(fulldata.fft_pzoz, 'EEG-PZ-OZ');
         d = new Date();

@@ -108,7 +108,8 @@ def main():
         json_data = data[count, :, :]
 
         from datetime import datetime
-        now = datetime.now()
+        from dateutil.tz import gettz
+        now = datetime.now(tz=gettz('Asia/Kolkata'))
         print("now =", now)
 
         root_time = strftime("%b-%d-%Y %H:%M")
@@ -172,6 +173,11 @@ def main():
                 row["EEG_FPZ_CZ_Slow Waves"] = None
             else:
                 row["EEG_FPZ_CZ_Slow Waves"] = json_data_eeg_fpzcz[i]
+
+            if (grads[0, i]<0.15):
+                row["EEG_FPZ_CZ_Grad"] = None
+            else:
+                row["EEG_FPZ_CZ_Grad"] = json_data_eeg_fpzcz[i]
             all_rows.append(row)
 
         with open('../frontend/data/EEG-FPZ-CZ.json', 'w') as f:
@@ -219,48 +225,54 @@ def main():
                 row["EEG_PZ_OZ_Slow Waves"] = None
             else:
                 row["EEG_PZ_OZ_Slow Waves"] = json_data_eeg_pzoz[i]
+
+            if (grads[0, i]<0.15):
+                row["EEG_PZ_OZ_Grad"] = None
+            else:
+                row["EEG_PZ_OZ_Grad"] = json_data_eeg_pzoz[i]
+
             all_rows.append(row)
 
         with open('../frontend/data/EEG-PZ-OZ.json', 'w') as f:
             f.write(str(all_rows).replace('\'', '"').replace('None', 'null'))
 
-        # EEG-FPZ-CZ-Grad
-        all_rows = []
-        for i in range(len(json_data_eeg_fpzcz)):
-            current_time = root_time + ':{}:{}0'.format(str(math.floor(i / 100)).zfill(2),
-                                                    str(math.floor(i % 100)).zfill(2))
-            current_time = "{}".format(current_time).replace('\'', '')
-            row = {}
-            row["date"] = current_time
-            row["EEG-FPZ-CZ"] = json_data_eeg_fpzcz[i]
-            if (grads[0, i]<0.15):
-                row["EEG-FPZ-CZ-Grad"] = None
-            else:
-                row["EEG-FPZ-CZ-Grad"] = json_data_eeg_fpzcz[i]
-
-            all_rows.append(row)
-
-        with open('../frontend/data/EEG-FPZ-CZ-Grad.json', 'w') as f:
-            f.write(str(all_rows).replace('\'', '"').replace('None', 'null'))
-
-        # EEG-PZ-OZ-Grad
-        all_rows = []
-        for i in range(len(json_data_eeg_pzoz)):
-            current_time = root_time + ':{}:{}0'.format(str(math.floor(i / 100)).zfill(2),
-                                                    str(math.floor(i % 100)).zfill(2))
-            current_time = "{}".format(current_time).replace('\'', '')
-            row = {}
-            row["date"] = current_time
-            row["EEG-PZ-OZ"] = json_data_eeg_pzoz[i]
-            if (grads[0, i]<0.15):
-                row["EEG-PZ-OZ-Grad"] = None
-            else:
-                row["EEG-PZ-OZ-Grad"] = json_data_eeg_pzoz[i]
-
-            all_rows.append(row)
-
-        with open('../frontend/data/EEG-PZ-OZ-Grad.json', 'w') as f:
-            f.write(str(all_rows).replace('\'', '"').replace('None', 'null'))
+        # # EEG-FPZ-CZ-Grad
+        # all_rows = []
+        # for i in range(len(json_data_eeg_fpzcz)):
+        #     current_time = root_time + ':{}:{}0'.format(str(math.floor(i / 100)).zfill(2),
+        #                                             str(math.floor(i % 100)).zfill(2))
+        #     current_time = "{}".format(current_time).replace('\'', '')
+        #     row = {}
+        #     row["date"] = current_time
+        #     row["EEG-FPZ-CZ"] = json_data_eeg_fpzcz[i]
+        #     if (grads[0, i]<0.15):
+        #         row["EEG-FPZ-CZ-Grad"] = None
+        #     else:
+        #         row["EEG-FPZ-CZ-Grad"] = json_data_eeg_fpzcz[i]
+        #
+        #     all_rows.append(row)
+        #
+        # with open('../frontend/data/EEG-FPZ-CZ-Grad.json', 'w') as f:
+        #     f.write(str(all_rows).replace('\'', '"').replace('None', 'null'))
+        #
+        # # EEG-PZ-OZ-Grad
+        # all_rows = []
+        # for i in range(len(json_data_eeg_pzoz)):
+        #     current_time = root_time + ':{}:{}0'.format(str(math.floor(i / 100)).zfill(2),
+        #                                             str(math.floor(i % 100)).zfill(2))
+        #     current_time = "{}".format(current_time).replace('\'', '')
+        #     row = {}
+        #     row["date"] = current_time
+        #     row["EEG-PZ-OZ"] = json_data_eeg_pzoz[i]
+        #     if (grads[0, i]<0.15):
+        #         row["EEG-PZ-OZ-Grad"] = None
+        #     else:
+        #         row["EEG-PZ-OZ-Grad"] = json_data_eeg_pzoz[i]
+        #
+        #     all_rows.append(row)
+        #
+        # with open('../frontend/data/EEG-PZ-OZ-Grad.json', 'w') as f:
+        #     f.write(str(all_rows).replace('\'', '"').replace('None', 'null'))
 
         #Other channel grads
         for index in range(2, 6):

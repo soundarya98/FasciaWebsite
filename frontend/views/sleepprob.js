@@ -1,4 +1,24 @@
-function redraw_sleepprob(data, channel, clientWidth, clientHeight) {
+function redraw_sleepprob(data, now) {
+    let tmpdate = new Date(now);
+    let hours = tmpdate.getHours();
+    if(hours < 10)
+    {
+        hours = '0' + hours;
+    }
+    let minutes = tmpdate.getMinutes();
+    if(minutes < 10)
+    {
+        minutes = '0' + minutes;
+    }
+    let seconds = tmpdate.getSeconds();
+    if(seconds < 10)
+    {
+        seconds = '0' + seconds;
+    }
+
+
+    let time = hours + ":" + minutes + ":" + seconds;
+    document.getElementById('time').innerHTML = time;
 // set the dimensions and margins of the graph
 //   var margin = {top: 20, right: 20, bottom: 30, left: 40},
 //     width = clientWidth - margin.left - margin.right,

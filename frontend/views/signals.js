@@ -2,11 +2,13 @@ let keysToColor = {
     ["EEG_FPZ_CZ"]:"#1f77b4",
     ["EEG_FPZ_CZ_Spindle"]:"#ff7f0e",
     ["EEG_FPZ_CZ_Slow Waves"]:"#2ca02c",
+    ["EEG_FPZ_CZ_Grad"]:"#DE0098",
     ["EEG_PZ_OZ"]:"#1f77b4",
     ["EEG_PZ_OZ_Spindle"]:"#ff7f0e",
     ["EEG_PZ_OZ_Slow Waves"]:"#2ca02c",
+    ["EEG_PZ_OZ_Grad"]:"#DE0098"
 }
-function redraw_eeg(data, channel, clientWidth, clientHeight, slowWave, spindle) {
+function redraw_eeg(data, channel, clientWidth, clientHeight, slowWave, spindle, saliency, now) {
     d3.select("#" + "svg-" + channel).remove();
     var chartDiv = document.getElementById(channel);
     var svg = d3.select(chartDiv).append("svg").attr("id", "svg-" + channel);
@@ -25,6 +27,7 @@ function redraw_eeg(data, channel, clientWidth, clientHeight, slowWave, spindle)
 
     // Date Parser takes in Date string and returns JS Data Object
     var parseTime = d3.timeParse("%b-%d-%Y %H:%M:%S:%L");
+    var parseTime2 = d3.timeParse("%b-%d-%Y %H:%M:%S:%L");
 
     // Scale X - time scale
     // Scale Y - linear scale
@@ -45,8 +48,14 @@ function redraw_eeg(data, channel, clientWidth, clientHeight, slowWave, spindle)
             return d.voltage !== null;
         });
 
+    //Apr-18-2021 08:15:29:770
+    //
+
+    let steptime = now;
     data.forEach(function (d) {
-        d.date = parseTime(d.date);
+        // d.date = parseTime(d.date);
+        d.date = new Date(steptime);
+        steptime += 10
     });
     var keys_ = null;
     if(channel == 'EEG-FPZ-CZ'){
@@ -57,6 +66,9 @@ function redraw_eeg(data, channel, clientWidth, clientHeight, slowWave, spindle)
         if(slowWave){
             keys_.push("EEG_FPZ_CZ_Slow Waves");
         }
+        if(saliency){
+             keys_.push("EEG_FPZ_CZ_Grad");
+        }
     }
     else{
         keys_ =   ["EEG_PZ_OZ"] ;
@@ -65,6 +77,9 @@ function redraw_eeg(data, channel, clientWidth, clientHeight, slowWave, spindle)
         }
         if(slowWave){
             keys_.push("EEG_PZ_OZ_Slow Waves");
+        }
+        if(saliency){
+             keys_.push("EEG_PZ_OZ_Grad");
         }
     }
 
@@ -105,9 +120,7 @@ function redraw_eeg(data, channel, clientWidth, clientHeight, slowWave, spindle)
     g.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + [height - margin.bottom] + ")")
-        .call(d3.axisBottom(x));
-
-    console.log("HERE")
+        .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%H:%M:%S")));
 
     // Create Y Axis
     // Add Text label to Y axis
@@ -168,7 +181,7 @@ function redraw_eeg(data, channel, clientWidth, clientHeight, slowWave, spindle)
     //     .style("alignment-baseline", "middle")
 };
 
-function redraw_signal(data, channel, clientWidth, clientHeight) {
+function redraw_signal(data, channel, clientWidth, clientHeight, now) {
     d3.select("#" + "svg-" + channel).remove();
     var chartDiv = document.getElementById(channel);
     var svg = d3.select(chartDiv).append("svg").attr("id", "svg-" + channel);
@@ -208,8 +221,12 @@ function redraw_signal(data, channel, clientWidth, clientHeight) {
             return d.voltage !== null;
         });
 
-    data.forEach(function (d) {
-        d.date = parseTime(d.date);
+        let steptime = now;
+
+        data.forEach(function (d) {
+        // d.date = parseTime(d.date);
+        d.date = new Date(steptime);
+        steptime += 10
     });
 
     var keys_ = [channel];
@@ -250,7 +267,7 @@ function redraw_signal(data, channel, clientWidth, clientHeight) {
     g.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(0," + [height - margin.bottom] + ")")
-        .call(d3.axisBottom(x));
+        .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%H:%M:%S")));
 
     // Create Y Axis
     // Add Text label to Y axis

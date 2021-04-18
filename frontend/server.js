@@ -200,7 +200,7 @@ io.on('connection', (socket) =>
           let  count = JSON.parse(raw_count);
           count = count.data;
           console.log("count is", count);
-          
+          console.log("sleepStage ",sleepstage); 
           var insert = {
             _id: count,
             psd_fpzcz: psd_fpzcz,
@@ -219,10 +219,11 @@ io.on('connection', (socket) =>
             resp:resp,
             emg:emg,
             fft_fpzcz: fft_fpzcz,
+            fft_pzoz: fft_pzoz,
             temp:temp
-        }; // inserting the full data so that we can retrive anything.
+        }; // inserting the full data so that we can retrieve anything.
 
-        let coll = dbo.collection('UserData');
+        let coll = dbo.collection('UserDataUpdated');
             
             coll.insertOne(insert, function (err, res) { 
                 if (err) {
@@ -295,27 +296,27 @@ io.on('connection', (socket) =>
         let rawfft_pzoz = fs.readFileSync('data/FFT-PZOZ.json');
         let fft_pzoz = JSON.parse(rawfft_pzoz);
 
-        socket.emit('SleepStage',
-            {
-                psd_fpzcz: psd_fpzcz,
-                psd_pzoz: psd_pzoz,
-                sleepprob: sleepprob,
-                stage: sleepstage,
-                eeg_fpzcz: eeg_fpzcz,
-                eeg_pzoz: eeg_pzoz,
-                eeg_fpzcz_grad: eeg_fpzcz_grad,
-                eeg_pzoz_grad: eeg_pzoz_grad,
-                eog_grad: eog_grad,
-                resp_grad: resp_grad,
-                emg_grad: emg_grad,
-                temp_grad: temp_grad,
-                eog:eog,
-                resp:resp,
-                emg:emg,
-                fft_fpzcz: fft_fpzcz,
-                fft_pzoz: fft_pzoz,
-                temp:temp
-            });
+        // socket.emit('SleepStage',
+        //     {
+        //         psd_fpzcz: psd_fpzcz,
+        //         psd_pzoz: psd_pzoz,
+        //         sleepprob: sleepprob,
+        //         stage: sleepstage,
+        //         eeg_fpzcz: eeg_fpzcz,
+        //         eeg_pzoz: eeg_pzoz,
+        //         eeg_fpzcz_grad: eeg_fpzcz_grad,
+        //         eeg_pzoz_grad: eeg_pzoz_grad,
+        //         eog_grad: eog_grad,
+        //         resp_grad: resp_grad,
+        //         emg_grad: emg_grad,
+        //         temp_grad: temp_grad,
+        //         eog:eog,
+        //         resp:resp,
+        //         emg:emg,
+        //         fft_fpzcz: fft_fpzcz,
+        //         fft_pzoz: fft_pzoz,
+        //         temp:temp
+        //     });
     });
 
     socket.on('Download', (data) => {
@@ -323,7 +324,7 @@ io.on('connection', (socket) =>
             if (err) throw err;
 
             var dbo = db.db("FASCIA");
-            dbo.collection("UserData").find({}).toArray(function (err, result) {
+            dbo.collection("UserDataUpdated").find({}).toArray(function (err, result) {
                 if (err) throw err;
                 socket.emit('DownloadResponse', {result});
                 db.close();
@@ -337,11 +338,13 @@ io.on('connection', (socket) =>
         MongoClient.connect(url, function(err, db) {
             if (err) throw err;
             var dbo = db.db("FASCIA");
-            dbo.collection("UserData").find({_id:Number(data.offset)}).toArray(function (err, result) {
-                if (err) throw err;
-            
-                socket.emit('SleepStage',
+            dbo.collection("UserDataUpdated").find({_id:Number(data.offset)}).toArray(function (err, result) {
+                if (err) throw err();
+
+                var now = new Date();
+		socket.emit('SleepStage',
                 {
+                    time: now,
                     psd_fpzcz: result[0].psd_fpzcz,
                     psd_pzoz: result[0].psd_pzoz,
                     sleepprob: result[0].sleepprob,
@@ -358,6 +361,7 @@ io.on('connection', (socket) =>
                     resp: result[0].resp,
                     emg: result[0].emg,
                     fft_fpzcz: result[0].fft_fpzcz,
+                    fft_pzoz: result[0].fft_pzoz,
                     temp: result[0].temp
                 });
                 db.close();
@@ -377,7 +381,7 @@ http.listen(8080, () => {
     MongoClient.connect(url, function(err, db) {
     if (err) throw err;
     var dbo = db.db("FASCIA");
-    // dbo.collection("UserData").deleteMany({}); // to clear database for the previous run.
-    
+    //dbo.collection("UserData").deleteMany({}); // to clear database for the previous run.
+    db.close();
     });
 });

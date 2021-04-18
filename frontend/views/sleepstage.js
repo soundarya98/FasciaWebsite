@@ -16,6 +16,7 @@ selection.each(function(data) {
      })
    };
  });
+
  var t = d3.transition().duration(duration).ease(d3.easeLinear),
      x = d3.scaleTime().rangeRound([0, width-margin.left-margin.right]),
      y = d3.scaleLinear().rangeRound([height-margin.top-margin.bottom, 0]),
@@ -74,7 +75,7 @@ var area = d3.area()
  g.select("g.axis.x")
    .attr("transform", "translate(0," + (height-margin.bottom-margin.top) + ")")
    .transition(t)
-   .call(d3.axisBottom(x).ticks(5));
+   .call(d3.axisBottom(x).ticks(5).tickFormat(d3.time.format("%H:%M:%S")));
  g.select("g.axis.y")
    .transition(t)
    .attr("class", "axis y")
@@ -195,7 +196,7 @@ function randomNumberBounds(min, max) {
  return Math.floor(Math.random() * max) + min;
 }
 function seedData() {
- var now = new Date();
+    var now = new Date();
  for (var i = 0; i < MAX_LENGTH; ++i) {
    lineArr.push({
      time: new Date(now.getTime() - ((MAX_LENGTH - i) * duration)),
@@ -228,24 +229,7 @@ var justFirst = false;
 var previousstage = NaN;
 socket.on('SleepStage', function (fulldata) {
    function updateDataSleep() {
-     var now = new Date();
-     var hours = now.getHours();
-     hours = ((hours + 11) % 12 + 1);
-     if(hours<10){
-       hours= "0" + hours;
-     }
-     var minutes;
-     if(now.getMinutes()<10){
-       minutes = "0" + now.getMinutes();
-     }
-     else {
-       minutes = now.getMinutes();
-     }
-     var time = hours + ":" + minutes;
-     var seconds;
-     if(now.getSeconds() > 30) { seconds = "00" } else {seconds = "30"}
-     time = time + ":" + seconds;
-     document.getElementById('time').innerHTML = time;
+       var now = new Date();
      var numbers = [0, 1, 2, 3, 4, 5];
      var firststage = numbers.map(firstColor)
      function firstColor(num) {
@@ -258,7 +242,6 @@ socket.on('SleepStage', function (fulldata) {
      }
      // console.log(firststage);
      if(first == false) {
-       console.log("first");
           var lineData1 = {
            time: now,
            wake: firststage[1],
@@ -267,7 +250,6 @@ socket.on('SleepStage', function (fulldata) {
            n3: firststage[4],
            rem: firststage[5]
         };
-          console.log(lineData1);
          lineArr.push(lineData1);
          first = true;
          justFirst = true;
@@ -287,7 +269,6 @@ socket.on('SleepStage', function (fulldata) {
        }
      }
      if(fulldata.stage.stage != previousstage && justFirst == false) {
-       console.log("changed!");
        var newstage = numberssleep.map(newstageColor);
        function newstageColor(num) {
        if(num == Math.max(fulldata.stage.stage, previousstage)) {
