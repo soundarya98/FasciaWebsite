@@ -51,10 +51,18 @@ class RepeatedTimer(object):
 def nodeserv(transfdata, cn):
     # tfdata = transfdata.values.tolist()
     tfdatajson = json.dumps(transfdata)
+    print("Sending data")
     cn.send(bytes(tfdatajson, encoding='utf8'))
 
 def main():
     count = 600
+
+    count_json = {}
+    count_json["data"]=count
+
+    with open('../frontend/data/count.json', 'w') as f:
+        f.write(str(count_json).replace('\'', '"'))
+    
     sn = socket.socket()
     hostn = 'localhost'
     portn = 14564
@@ -65,7 +73,6 @@ def main():
     sn.listen(5)
     cn, addrn = sn.accept()
     print('Got connection from', addrn)
-
     mapping = {0: 'Wake', 1: 'N1', 2: 'N2', 3: 'N3', 4: 'REM'}
     # hyp = {0: 4, 1: 2, 2: 1, 3: 0, 4: 3}
     channels = {0: 'EEG-FPZ-CZ', 1: 'EEG-PZ-OZ', 2: 'EOG', 3: 'Resp-Oro-Nasal', 4: 'EMG', 5: 'Temp'}
@@ -83,8 +90,10 @@ def main():
 
     np.savez(save_path, **save_dict)
 
+    # cn.recv(1024) 
     rt = RepeatedTimer(30, func, qu)  # it auto-starts, no need of rt.start()
     while True:
+        
         print("Epoch Number: ", count)
         save_dict = {
             'x': data[count, :, :],
@@ -368,6 +377,11 @@ def main():
         # nodeserv(hyp[int(sleepstage)], cn)
         nodeserv(int(sleepstage), cn)
         count += 1
+        count_json = {}
+        count_json["data"]=count
+        
+        with open('../frontend/data/count.json', 'w') as f:
+            f.write(str(count_json).replace('\'', '"'))
         qu.task_done()
 
     try:

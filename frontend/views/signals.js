@@ -1,4 +1,12 @@
-function redraw_eeg(data, channel, clientWidth, clientHeight) {
+let keysToColor = {
+    ["EEG_FPZ_CZ"]:"#1f77b4",
+    ["EEG_FPZ_CZ_Spindle"]:"#ff7f0e",
+    ["EEG_FPZ_CZ_Slow Waves"]:"#2ca02c",
+    ["EEG_PZ_OZ"]:"#1f77b4",
+    ["EEG_PZ_OZ_Spindle"]:"#ff7f0e",
+    ["EEG_PZ_OZ_Slow Waves"]:"#2ca02c",
+}
+function redraw_eeg(data, channel, clientWidth, clientHeight, slowWave, spindle) {
     d3.select("#" + "svg-" + channel).remove();
     var chartDiv = document.getElementById(channel);
     var svg = d3.select(chartDiv).append("svg").attr("id", "svg-" + channel);
@@ -40,14 +48,24 @@ function redraw_eeg(data, channel, clientWidth, clientHeight) {
     data.forEach(function (d) {
         d.date = parseTime(d.date);
     });
-
     var keys_ = null;
     if(channel == 'EEG-FPZ-CZ'){
-         keys_ =   ["EEG_FPZ_CZ", "EEG_FPZ_CZ_Spindle", "EEG_FPZ_CZ_Slow Waves"];
+         keys_ =   ["EEG_FPZ_CZ"];
+         if(spindle){
+            keys_.push("EEG_FPZ_CZ_Spindle");
+        }
+        if(slowWave){
+            keys_.push("EEG_FPZ_CZ_Slow Waves");
+        }
     }
-
     else{
-        keys_ =   ["EEG_PZ_OZ", "EEG_PZ_OZ_Spindle", "EEG_PZ_OZ_Slow Waves"];
+        keys_ =   ["EEG_PZ_OZ"] ;
+        if(spindle){
+            keys_.push("EEG_PZ_OZ_Spindle");
+        }
+        if(slowWave){
+            keys_.push("EEG_PZ_OZ_Slow Waves");
+        }
     }
 
     var rows = keys_.map(function (id) {
@@ -120,7 +138,7 @@ function redraw_eeg(data, channel, clientWidth, clientHeight) {
             return line(d.values);
         })
         .style("stroke", function (d) {
-            return z(d.id);
+            return keysToColor[d.id];
         })
         .style("color", colours(3));
 
@@ -288,7 +306,7 @@ function redraw_signal(data, channel, clientWidth, clientHeight) {
         .style("alignment-baseline", "middle")
 };
 
-function redraw_grad(data, channel, clientWidth, clientHeight) {
+function redraw_grad(data, channel, clientWidth, clientHeight, saliency) {
     d3.select("#" + "svg-" + channel + "-grad").remove();
     var chartDiv = document.getElementById(channel + "-Grad");
     var svg = d3.select(chartDiv).append("svg").attr("id", "svg-" + channel + "-grad");
@@ -335,8 +353,10 @@ function redraw_grad(data, channel, clientWidth, clientHeight) {
         d.date = parseTime(d.date);
     });
 
-    var keys_ =  [channel, channel + "-Grad"];
-
+    var keys_ =  [channel];
+    if(saliency){
+        keys_.push(channel + "-Grad");
+    }
 
     var rows = keys_.map(function (id) {
         return {
