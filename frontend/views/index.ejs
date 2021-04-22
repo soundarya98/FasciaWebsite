@@ -4,6 +4,7 @@
 <title>FASCIA</title>
 
 <link href="/css/stylesheet.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
@@ -104,8 +105,8 @@ function current() {
 }
 
 $(document).ready(function(){
-        // getNext();
-        myVar = setInterval(getNext, 90000);
+        getNext();
+        myVar = setInterval(getNext, 30000);
         $("#play").click(function () {
             play();
             $("#info").html('<p>Response will change every 30s. Press Pause to stop.</p>')
@@ -212,19 +213,18 @@ $(document).ready(function(){
 <div id="page">
 <div class="topnav">
   <a href="#">Welcome <%= username %>!</a>
-  <a href='/index_all'>Separate Signals</a>
 <!--  <a href="#">User</a>-->
 </div>
 <!-- Adding next and prev button -->
 
 <div id="getdata"> 
-    <button id="pause" class="button" >Pause</button>
-    <button id="play" class="button" >Play</button>
-    <button id="prev" class="button" >Prev</button>
-    <button id="next" class="button" >Next</button>
+    <button id="pause" class="button" ><i class="fa fa-pause"></i></button>
+    <button id="play" class="button" ><i class="fa fa-play"></i></button>
+    <button id="prev" class="button" ><i class="fa fa-backward"></i></button>
+    <button id="next" class="button" ><i class="fa fa-forward"></i></button>
     <p id="info">Response will change every 30s. Press Pause to stop.</p>
 </div>
-<div id="getdataposition"> 
+<div id="getdataposition" style="display:inline;">
     <input type="number" step="1" min="601" max="1000" />
     <button id="go" class="button"  >Go!</button>
 </div>
@@ -441,8 +441,6 @@ $(document).ready(function(){
         let ms = 1000 * 60 * 0.5; // convert minutes to ms
         let now = new Date();
         now = Math.round(now.getTime() / ms) * ms;
-        console.log("now", now);
-        console.log("nowtime", new Date(now));
         redraw_sleepprob(fulldata.sleepprob, now);
         redraw_eeg(fulldata.eeg_fpzcz, 'EEG-FPZ-CZ', clientWidth, clientHeight, slowWave, spindle, saliency, now);
         redraw_eeg(fulldata.eeg_pzoz, 'EEG-PZ-OZ', clientWidth, clientHeight, slowWave, spindle, saliency, now);
@@ -454,10 +452,10 @@ $(document).ready(function(){
         // redraw_grad(fulldata.emg_grad, 'EMG', clientWidth, clientHeight, saliency);
         // redraw_grad(fulldata.temp_grad, 'Temp', clientWidth, clientHeight, saliency);
         
-        redraw_signal(fulldata.eog, 'EOG', clientWidth, clientHeight, now);
-        redraw_signal(fulldata.emg, 'EMG', clientWidth, clientHeight, now);
-        redraw_signal(fulldata.resp, 'Resp-Oro-Nasal', clientWidth, clientHeight, now);
-        redraw_signal(fulldata.temp, 'Temp', clientWidth, clientHeight, now);
+        redraw_signal(fulldata.eog, 'EOG', clientWidth, clientHeight, slowWave, spindle, saliency, now);
+        redraw_signal(fulldata.emg, 'EMG', clientWidth, clientHeight, slowWave, spindle, saliency, now);
+        redraw_signal(fulldata.resp, 'Resp-Oro-Nasal', clientWidth, clientHeight, slowWave, spindle, saliency, now);
+        redraw_signal(fulldata.temp, 'Temp', clientWidth, clientHeight, slowWave, spindle, saliency, now);
         redraw_fft(fulldata.fft_fpzcz, 'EEG-FPZ-CZ');
         redraw_fft(fulldata.fft_pzoz, 'EEG-PZ-OZ');
         d = new Date();

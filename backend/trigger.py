@@ -55,8 +55,7 @@ def nodeserv(transfdata, cn):
     cn.send(bytes(tfdatajson, encoding='utf8'))
 
 def main():
-    count = 600
-
+    count = 684
     count_json = {}
     count_json["data"]=count
 
@@ -236,68 +235,33 @@ def main():
         with open('../frontend/data/EEG-PZ-OZ.json', 'w') as f:
             f.write(str(all_rows).replace('\'', '"').replace('None', 'null'))
 
-        # # EEG-FPZ-CZ-Grad
-        # all_rows = []
-        # for i in range(len(json_data_eeg_fpzcz)):
-        #     current_time = root_time + ':{}:{}0'.format(str(math.floor(i / 100)).zfill(2),
-        #                                             str(math.floor(i % 100)).zfill(2))
-        #     current_time = "{}".format(current_time).replace('\'', '')
-        #     row = {}
-        #     row["date"] = current_time
-        #     row["EEG-FPZ-CZ"] = json_data_eeg_fpzcz[i]
-        #     if (grads[0, i]<0.15):
-        #         row["EEG-FPZ-CZ-Grad"] = None
-        #     else:
-        #         row["EEG-FPZ-CZ-Grad"] = json_data_eeg_fpzcz[i]
+        # #Other channel grads
+        # for index in range(2, 6):
+        #     json_data_tmp = np.transpose(np.transpose(json_data)[index][:][:])
+        #     json_data_tmp = json_data_tmp.reshape(3000, )
         #
-        #     all_rows.append(row)
+        #     all_rows = []
+        #     for i in range(len(json_data_tmp)):
+        #         current_time = root_time + ':{}:{}0'.format(str(math.floor(i / 100)).zfill(2),
+        #                                                     str(math.floor(i % 100)).zfill(2))
+        #         current_time = "{}".format(current_time).replace('\'', '')
+        #         row = {}
+        #         row["date"] = current_time
+        #         row[channels[index]] = json_data_tmp[i]
+        #         row[channels[index]+"_Spindle"] = None
+        #         row[channels[index] + "_Slow Waves"] = None
+        #         if (grads[0, i] < 0.15):
+        #             row[channels[index]+"_Grad"] = None
+        #         else:
+        #             row[channels[index]+"_Grad"] = json_data_tmp[i]
+        #         all_rows.append(row)
         #
-        # with open('../frontend/data/EEG-FPZ-CZ-Grad.json', 'w') as f:
-        #     f.write(str(all_rows).replace('\'', '"').replace('None', 'null'))
-        #
-        # # EEG-PZ-OZ-Grad
-        # all_rows = []
-        # for i in range(len(json_data_eeg_pzoz)):
-        #     current_time = root_time + ':{}:{}0'.format(str(math.floor(i / 100)).zfill(2),
-        #                                             str(math.floor(i % 100)).zfill(2))
-        #     current_time = "{}".format(current_time).replace('\'', '')
-        #     row = {}
-        #     row["date"] = current_time
-        #     row["EEG-PZ-OZ"] = json_data_eeg_pzoz[i]
-        #     if (grads[0, i]<0.15):
-        #         row["EEG-PZ-OZ-Grad"] = None
-        #     else:
-        #         row["EEG-PZ-OZ-Grad"] = json_data_eeg_pzoz[i]
-        #
-        #     all_rows.append(row)
-        #
-        # with open('../frontend/data/EEG-PZ-OZ-Grad.json', 'w') as f:
-        #     f.write(str(all_rows).replace('\'', '"').replace('None', 'null'))
-
-        #Other channel grads
-        for index in range(2, 6):
-            json_data_tmp = np.transpose(np.transpose(json_data)[index][:][:])
-            json_data_tmp = json_data_tmp.reshape(3000, )
-
-            all_rows = []
-            for i in range(len(json_data_tmp)):
-                current_time = root_time + ':{}:{}0'.format(str(math.floor(i / 100)).zfill(2),
-                                                            str(math.floor(i % 100)).zfill(2))
-                current_time = "{}".format(current_time).replace('\'', '')
-                row = {}
-                row["date"] = current_time
-                row[channels[index]] = json_data_tmp[i]
-                if (grads[0, i] < 0.15):
-                    row[channels[index]+"-Grad"] = None
-                else:
-                    row[channels[index]+"-Grad"] = json_data_tmp[i]
-                all_rows.append(row)
-
-            with open('../frontend/data/'+channels[index]+'-Grad.json', 'w') as f:
-                f.write(str(all_rows).replace('\'', '"').replace('None', 'null'))
+        #     with open('../frontend/data/'+channels[index]+'-Grad.json', 'w') as f:
+        #         f.write(str(all_rows).replace('\'', '"').replace('None', 'null'))
 
         #Normal non-EEG channels
         for index in range(2, 6):
+            print(channels[index])
             json_data_tmp = np.transpose(np.transpose(json_data)[index][:][:])
             json_data_tmp = json_data_tmp.reshape(3000, )
 
@@ -309,6 +273,12 @@ def main():
                 row = {}
                 row["date"] = current_time
                 row[channels[index]] = json_data_tmp[i]
+                row[channels[index] + "_Spindle"] = None
+                row[channels[index] + "_Slow Waves"] = None
+                if (grads[0, i] < 0.15):
+                    row[channels[index] + "_Grad"] = None
+                else:
+                    row[channels[index] + "_Grad"] = json_data_tmp[i]
                 all_rows.append(row)
 
             with open('../frontend/data/'+channels[index]+'.json', 'w') as f:

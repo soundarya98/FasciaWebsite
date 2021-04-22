@@ -223,6 +223,7 @@ io.on('connection', (socket) =>
             temp:temp
         }; // inserting the full data so that we can retrieve anything.
 
+
         let coll = dbo.collection('UserDataUpdated');
             
             coll.insertOne(insert, function (err, res) { 
