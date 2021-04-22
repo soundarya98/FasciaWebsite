@@ -55,7 +55,8 @@ def nodeserv(transfdata, cn):
     cn.send(bytes(tfdatajson, encoding='utf8'))
 
 def main():
-    count = 684
+    # 713
+    count = 500
     count_json = {}
     count_json["data"]=count
 
