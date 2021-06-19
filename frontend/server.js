@@ -110,215 +110,215 @@ io.on('connection', (socket) =>
         console.log('Disconnected');
     });
 
-  //data contains the sleep stage
-    client.on('data', (data) =>
-    {
-        strData = parseInt(data.toString());
-        console.log(parseInt(strData));
+  // //data contains the sleep stage
+  //   client.on('data', (data) =>
+  //   {
+  //       strData = parseInt(data.toString());
+  //       console.log(parseInt(strData));
+  //
+  //       let rawsleepstage = fs.readFileSync('data/sleepstage.json');
+  //       let sleepstage = JSON.parse(rawsleepstage);
+  //
+  //       let rawsleepprob = fs.readFileSync('data/SleepProb.json');
+  //       let sleepprob = JSON.parse(rawsleepprob);
+  //
+  //       let raweeg_fpzcz = fs.readFileSync('data/EEG-FPZ-CZ.json');
+  //       let eeg_fpzcz = JSON.parse(raweeg_fpzcz);
+  //
+  //       let raweeg_pzoz = fs.readFileSync('data/EEG-PZ-OZ.json');
+  //       let eeg_pzoz = JSON.parse(raweeg_pzoz);
+  //
+  //       let eog = fs.readFileSync('data/EOG.json');
+  //       eog = JSON.parse(eog);
+  //
+  //       let resp = fs.readFileSync('data/Resp-Oro-Nasal.json');
+  //       resp = JSON.parse(resp);
+  //
+  //       let emg = fs.readFileSync('data/EMG.json');
+  //       emg = JSON.parse(emg);
+  //
+  //       let temp = fs.readFileSync('data/Temp.json');
+  //       temp = JSON.parse(temp);
+  //
+  //       let raweeg_fpzcz_grad = fs.readFileSync('data/EEG-FPZ-CZ-Grad.json');
+  //       let eeg_fpzcz_grad = JSON.parse(raweeg_fpzcz_grad);
+  //
+  //       let raweeg_pzoz_grad = fs.readFileSync('data/EEG-PZ-OZ-Grad.json');
+  //       let eeg_pzoz_grad = JSON.parse(raweeg_pzoz_grad);
+  //
+  //       let raweog_grad = fs.readFileSync('data/EOG-Grad.json');
+  //       let eog_grad = JSON.parse(raweog_grad);
+  //
+  //       let rawresp_grad = fs.readFileSync('data/Resp-Oro-Nasal-Grad.json');
+  //       let resp_grad = JSON.parse(rawresp_grad);
+  //
+  //       let rawemg_grad = fs.readFileSync('data/EMG-Grad.json');
+  //       let emg_grad = JSON.parse(rawemg_grad);
+  //
+  //       let rawtemp_grad = fs.readFileSync('data/Temp-Grad.json');
+  //       let temp_grad = JSON.parse(rawtemp_grad);
+  //
+  //       let rawpsd_fpzcz = fs.readFileSync('data/PSD-FPZCZ.json');
+  //       let psd_fpzcz = JSON.parse(rawpsd_fpzcz);
+  //
+  //       let rawpsd_pzoz = fs.readFileSync('data/PSD-PZOZ.json');
+  //       let psd_pzoz = JSON.parse(rawpsd_pzoz);
+  //
+  //       let rawfft_fpzcz = fs.readFileSync('data/FFT-FPZCZ.json');
+  //       let fft_fpzcz = JSON.parse(rawfft_fpzcz);
+  //
+  //       let rawfft_pzoz = fs.readFileSync('data/FFT-PZOZ.json');
+  //       let fft_pzoz = JSON.parse(rawfft_pzoz);
+  //
+  //       // socket.emit('SleepStage',
+  //       //     {
+  //       //         psd_fpzcz: psd_fpzcz,
+  //       //         psd_pzoz: psd_pzoz,
+  //       //         sleepprob: sleepprob,
+  //       //         stage: sleepstage,
+  //       //         eeg_fpzcz: eeg_fpzcz,
+  //       //         eeg_pzoz: eeg_pzoz,
+  //       //         eeg_fpzcz_grad: eeg_fpzcz_grad,
+  //       //         eeg_pzoz_grad: eeg_pzoz_grad,
+  //       //         eog_grad: eog_grad,
+  //       //         resp_grad: resp_grad,
+  //       //         emg_grad: emg_grad,
+  //       //         temp_grad: temp_grad,
+  //       //         eog:eog,
+  //       //         resp:resp,
+  //       //         emg:emg,
+  //       //         fft_fpzcz: fft_fpzcz,
+  //       //         fft_pzoz: fft_pzoz,
+  //       //         temp:temp
+  //       //     });
+  //
+  //       MongoClient.connect(url, function(err, db) {
+  //         if (err) throw err;
+  //         var dbo = db.db("FASCIA");
+  //
+  //         let raw_count = fs.readFileSync('data/count.json');
+  //         let  count = JSON.parse(raw_count);
+  //         count = count.data;
+  //         console.log("count is", count);
+  //         console.log("sleepStage ",sleepstage);
+  //         var insert = {
+  //           _id: count,
+  //           psd_fpzcz: psd_fpzcz,
+  //           psd_pzoz: psd_pzoz,
+  //           sleepprob: sleepprob,
+  //           stage: sleepstage,
+  //           eeg_fpzcz: eeg_fpzcz,
+  //           eeg_pzoz: eeg_pzoz,
+  //           eeg_fpzcz_grad: eeg_fpzcz_grad,
+  //           eeg_pzoz_grad: eeg_pzoz_grad,
+  //           eog_grad: eog_grad,
+  //           resp_grad: resp_grad,
+  //           emg_grad: emg_grad,
+  //           temp_grad: temp_grad,
+  //           eog:eog,
+  //           resp:resp,
+  //           emg:emg,
+  //           fft_fpzcz: fft_fpzcz,
+  //           fft_pzoz: fft_pzoz,
+  //           temp:temp
+  //       }; // inserting the full data so that we can retrieve anything.
+  //
+  //
+  //       let coll = dbo.collection('UserDataUpdated');
+  //
+  //           coll.insertOne(insert, function (err, res) {
+  //               if (err) {
+  //                   console.log("Updating");
+  //                   db.close();
+  //               }
+  //               else {
+  //                   console.log("Number of epochs inserted: " + res.insertedCount);
+  //                   db.close();
+  //               }
+  //           });
+  //       });
+  //   });
 
-        let rawsleepstage = fs.readFileSync('data/sleepstage.json');
-        let sleepstage = JSON.parse(rawsleepstage);
-
-        let rawsleepprob = fs.readFileSync('data/SleepProb.json');
-        let sleepprob = JSON.parse(rawsleepprob);
-
-        let raweeg_fpzcz = fs.readFileSync('data/EEG-FPZ-CZ.json');
-        let eeg_fpzcz = JSON.parse(raweeg_fpzcz);
-
-        let raweeg_pzoz = fs.readFileSync('data/EEG-PZ-OZ.json');
-        let eeg_pzoz = JSON.parse(raweeg_pzoz);
-
-        let eog = fs.readFileSync('data/EOG.json');
-        eog = JSON.parse(eog);
-
-        let resp = fs.readFileSync('data/Resp-Oro-Nasal.json');
-        resp = JSON.parse(resp);
-
-        let emg = fs.readFileSync('data/EMG.json');
-        emg = JSON.parse(emg);
-
-        let temp = fs.readFileSync('data/Temp.json');
-        temp = JSON.parse(temp);
-
-        let raweeg_fpzcz_grad = fs.readFileSync('data/EEG-FPZ-CZ-Grad.json');
-        let eeg_fpzcz_grad = JSON.parse(raweeg_fpzcz_grad);
-
-        let raweeg_pzoz_grad = fs.readFileSync('data/EEG-PZ-OZ-Grad.json');
-        let eeg_pzoz_grad = JSON.parse(raweeg_pzoz_grad);
-
-        let raweog_grad = fs.readFileSync('data/EOG-Grad.json');
-        let eog_grad = JSON.parse(raweog_grad);
-
-        let rawresp_grad = fs.readFileSync('data/Resp-Oro-Nasal-Grad.json');
-        let resp_grad = JSON.parse(rawresp_grad);
-
-        let rawemg_grad = fs.readFileSync('data/EMG-Grad.json');
-        let emg_grad = JSON.parse(rawemg_grad);
-
-        let rawtemp_grad = fs.readFileSync('data/Temp-Grad.json');
-        let temp_grad = JSON.parse(rawtemp_grad);
-
-        let rawpsd_fpzcz = fs.readFileSync('data/PSD-FPZCZ.json');
-        let psd_fpzcz = JSON.parse(rawpsd_fpzcz);
-
-        let rawpsd_pzoz = fs.readFileSync('data/PSD-PZOZ.json');
-        let psd_pzoz = JSON.parse(rawpsd_pzoz);
-
-        let rawfft_fpzcz = fs.readFileSync('data/FFT-FPZCZ.json');
-        let fft_fpzcz = JSON.parse(rawfft_fpzcz);
-
-        let rawfft_pzoz = fs.readFileSync('data/FFT-PZOZ.json');
-        let fft_pzoz = JSON.parse(rawfft_pzoz);
-
-        // socket.emit('SleepStage',
-        //     {
-        //         psd_fpzcz: psd_fpzcz,
-        //         psd_pzoz: psd_pzoz,
-        //         sleepprob: sleepprob,
-        //         stage: sleepstage,
-        //         eeg_fpzcz: eeg_fpzcz,
-        //         eeg_pzoz: eeg_pzoz,
-        //         eeg_fpzcz_grad: eeg_fpzcz_grad,
-        //         eeg_pzoz_grad: eeg_pzoz_grad,
-        //         eog_grad: eog_grad,
-        //         resp_grad: resp_grad,
-        //         emg_grad: emg_grad,
-        //         temp_grad: temp_grad,
-        //         eog:eog,
-        //         resp:resp,
-        //         emg:emg,
-        //         fft_fpzcz: fft_fpzcz,
-        //         fft_pzoz: fft_pzoz,
-        //         temp:temp
-        //     });
-
-        MongoClient.connect(url, function(err, db) {
-          if (err) throw err;
-          var dbo = db.db("FASCIA");
-
-          let raw_count = fs.readFileSync('data/count.json');
-          let  count = JSON.parse(raw_count);
-          count = count.data;
-          console.log("count is", count);
-          console.log("sleepStage ",sleepstage); 
-          var insert = {
-            _id: count,
-            psd_fpzcz: psd_fpzcz,
-            psd_pzoz: psd_pzoz,
-            sleepprob: sleepprob,
-            stage: sleepstage,
-            eeg_fpzcz: eeg_fpzcz,
-            eeg_pzoz: eeg_pzoz,
-            eeg_fpzcz_grad: eeg_fpzcz_grad,
-            eeg_pzoz_grad: eeg_pzoz_grad,
-            eog_grad: eog_grad,
-            resp_grad: resp_grad,
-            emg_grad: emg_grad,
-            temp_grad: temp_grad,
-            eog:eog,
-            resp:resp,
-            emg:emg,
-            fft_fpzcz: fft_fpzcz,
-            fft_pzoz: fft_pzoz,
-            temp:temp
-        }; // inserting the full data so that we can retrieve anything.
-
-
-        let coll = dbo.collection('UserDataUpdated');
-            
-            coll.insertOne(insert, function (err, res) { 
-                if (err) {
-                    console.log("Updating");
-                    db.close();
-                }
-                else {
-                    console.log("Number of epochs inserted: " + res.insertedCount);
-                    db.close();
-                }
-            });
-        });
-    });
-
-    socket.on('Updated', (data) =>
-    {
-        let rawsleepstage = fs.readFileSync('data/sleepstage.json');
-        let sleepstage = JSON.parse(rawsleepstage);
-
-        let rawsleepprob = fs.readFileSync('data/SleepProb.json');
-        let sleepprob = JSON.parse(rawsleepprob);
-
-        // console.log(sleepprob);
-
-        let raweeg_fpzcz = fs.readFileSync('data/EEG-FPZ-CZ.json');
-        let eeg_fpzcz = JSON.parse(raweeg_fpzcz);
-
-        let raweeg_pzoz = fs.readFileSync('data/EEG-PZ-OZ.json');
-        let eeg_pzoz = JSON.parse(raweeg_pzoz);
-
-        let raweeg_fpzcz_grad = fs.readFileSync('data/EEG-FPZ-CZ-Grad.json');
-        let eeg_fpzcz_grad = JSON.parse(raweeg_fpzcz_grad);
-
-        let raweeg_pzoz_grad = fs.readFileSync('data/EEG-PZ-OZ-Grad.json');
-        let eeg_pzoz_grad = JSON.parse(raweeg_pzoz_grad);
-
-        let raweog_grad = fs.readFileSync('data/EOG-Grad.json');
-        let eog_grad = JSON.parse(raweog_grad);
-
-        let rawresp_grad = fs.readFileSync('data/Resp-Oro-Nasal-Grad.json');
-        let resp_grad = JSON.parse(rawresp_grad);
-
-        let rawemg_grad = fs.readFileSync('data/EMG-Grad.json');
-        let emg_grad = JSON.parse(rawemg_grad);
-
-        let rawtemp_grad = fs.readFileSync('data/Temp-Grad.json');
-        let temp_grad = JSON.parse(rawtemp_grad);
-
-        let eog = fs.readFileSync('data/EOG.json');
-        eog = JSON.parse(eog);
-
-        let resp = fs.readFileSync('data/Resp-Oro-Nasal.json');
-        resp = JSON.parse(resp);
-
-        let emg = fs.readFileSync('data/EMG.json');
-        emg = JSON.parse(emg);
-
-        let temp = fs.readFileSync('data/Temp.json');
-        temp = JSON.parse(temp);
-
-        let rawpsd_fpzcz = fs.readFileSync('data/PSD-FPZCZ.json');
-        let psd_fpzcz = JSON.parse(rawpsd_fpzcz);
-
-        let rawpsd_pzoz = fs.readFileSync('data/PSD-PZOZ.json');
-        let psd_pzoz = JSON.parse(rawpsd_pzoz);
-
-        let rawfft_fpzcz = fs.readFileSync('data/FFT-FPZCZ.json');
-        let fft_fpzcz = JSON.parse(rawfft_fpzcz);
-
-        let rawfft_pzoz = fs.readFileSync('data/FFT-PZOZ.json');
-        let fft_pzoz = JSON.parse(rawfft_pzoz);
-
-        // socket.emit('SleepStage',
-        //     {
-        //         psd_fpzcz: psd_fpzcz,
-        //         psd_pzoz: psd_pzoz,
-        //         sleepprob: sleepprob,
-        //         stage: sleepstage,
-        //         eeg_fpzcz: eeg_fpzcz,
-        //         eeg_pzoz: eeg_pzoz,
-        //         eeg_fpzcz_grad: eeg_fpzcz_grad,
-        //         eeg_pzoz_grad: eeg_pzoz_grad,
-        //         eog_grad: eog_grad,
-        //         resp_grad: resp_grad,
-        //         emg_grad: emg_grad,
-        //         temp_grad: temp_grad,
-        //         eog:eog,
-        //         resp:resp,
-        //         emg:emg,
-        //         fft_fpzcz: fft_fpzcz,
-        //         fft_pzoz: fft_pzoz,
-        //         temp:temp
-        //     });
-    });
+    // socket.on('Updated', (data) =>
+    // {
+    //     let rawsleepstage = fs.readFileSync('data/sleepstage.json');
+    //     let sleepstage = JSON.parse(rawsleepstage);
+    //
+    //     let rawsleepprob = fs.readFileSync('data/SleepProb.json');
+    //     let sleepprob = JSON.parse(rawsleepprob);
+    //
+    //     // console.log(sleepprob);
+    //
+    //     let raweeg_fpzcz = fs.readFileSync('data/EEG-FPZ-CZ.json');
+    //     let eeg_fpzcz = JSON.parse(raweeg_fpzcz);
+    //
+    //     let raweeg_pzoz = fs.readFileSync('data/EEG-PZ-OZ.json');
+    //     let eeg_pzoz = JSON.parse(raweeg_pzoz);
+    //
+    //     let raweeg_fpzcz_grad = fs.readFileSync('data/EEG-FPZ-CZ-Grad.json');
+    //     let eeg_fpzcz_grad = JSON.parse(raweeg_fpzcz_grad);
+    //
+    //     let raweeg_pzoz_grad = fs.readFileSync('data/EEG-PZ-OZ-Grad.json');
+    //     let eeg_pzoz_grad = JSON.parse(raweeg_pzoz_grad);
+    //
+    //     let raweog_grad = fs.readFileSync('data/EOG-Grad.json');
+    //     let eog_grad = JSON.parse(raweog_grad);
+    //
+    //     let rawresp_grad = fs.readFileSync('data/Resp-Oro-Nasal-Grad.json');
+    //     let resp_grad = JSON.parse(rawresp_grad);
+    //
+    //     let rawemg_grad = fs.readFileSync('data/EMG-Grad.json');
+    //     let emg_grad = JSON.parse(rawemg_grad);
+    //
+    //     let rawtemp_grad = fs.readFileSync('data/Temp-Grad.json');
+    //     let temp_grad = JSON.parse(rawtemp_grad);
+    //
+    //     let eog = fs.readFileSync('data/EOG.json');
+    //     eog = JSON.parse(eog);
+    //
+    //     let resp = fs.readFileSync('data/Resp-Oro-Nasal.json');
+    //     resp = JSON.parse(resp);
+    //
+    //     let emg = fs.readFileSync('data/EMG.json');
+    //     emg = JSON.parse(emg);
+    //
+    //     let temp = fs.readFileSync('data/Temp.json');
+    //     temp = JSON.parse(temp);
+    //
+    //     let rawpsd_fpzcz = fs.readFileSync('data/PSD-FPZCZ.json');
+    //     let psd_fpzcz = JSON.parse(rawpsd_fpzcz);
+    //
+    //     let rawpsd_pzoz = fs.readFileSync('data/PSD-PZOZ.json');
+    //     let psd_pzoz = JSON.parse(rawpsd_pzoz);
+    //
+    //     let rawfft_fpzcz = fs.readFileSync('data/FFT-FPZCZ.json');
+    //     let fft_fpzcz = JSON.parse(rawfft_fpzcz);
+    //
+    //     let rawfft_pzoz = fs.readFileSync('data/FFT-PZOZ.json');
+    //     let fft_pzoz = JSON.parse(rawfft_pzoz);
+    //
+    //     // socket.emit('SleepStage',
+    //     //     {
+    //     //         psd_fpzcz: psd_fpzcz,
+    //     //         psd_pzoz: psd_pzoz,
+    //     //         sleepprob: sleepprob,
+    //     //         stage: sleepstage,
+    //     //         eeg_fpzcz: eeg_fpzcz,
+    //     //         eeg_pzoz: eeg_pzoz,
+    //     //         eeg_fpzcz_grad: eeg_fpzcz_grad,
+    //     //         eeg_pzoz_grad: eeg_pzoz_grad,
+    //     //         eog_grad: eog_grad,
+    //     //         resp_grad: resp_grad,
+    //     //         emg_grad: emg_grad,
+    //     //         temp_grad: temp_grad,
+    //     //         eog:eog,
+    //     //         resp:resp,
+    //     //         emg:emg,
+    //     //         fft_fpzcz: fft_fpzcz,
+    //     //         fft_pzoz: fft_pzoz,
+    //     //         temp:temp
+    //     //     });
+    // });
 
     socket.on('Download', (data) => {
         MongoClient.connect(url, function(err, db) {
@@ -336,6 +336,15 @@ io.on('connection', (socket) =>
     
     socket.on('Change', (data) => {
         console.log("Changing:"+data.offset);
+
+        let rawsleepstage = fs.readFileSync('data/stage.json');
+        let sleepstage = JSON.parse(rawsleepstage);
+
+        let rawsleepprob = fs.readFileSync('data/newSleepProb.json');
+        let sleepprob = JSON.parse(rawsleepprob);
+
+        console.log("act sleepstage", sleepstage[data.offset])
+
         MongoClient.connect(url, function(err, db) {
             if (err) throw err;
             var dbo = db.db("FASCIA");
@@ -343,13 +352,16 @@ io.on('connection', (socket) =>
                 if (err) throw err();
 
                 var now = new Date();
+                // console.log(result[0].sleepprob)
+                // console.log(result[0].stage)
 		socket.emit('SleepStage',
                 {
                     time: now,
+		            epoch: result[0]._id,
                     psd_fpzcz: result[0].psd_fpzcz,
                     psd_pzoz: result[0].psd_pzoz,
-                    sleepprob: result[0].sleepprob,
-                    stage: result[0].stage,
+                    sleepprob: sleepprob[data.offset],
+                    stage: sleepstage[data.offset],
                     eeg_fpzcz: result[0].eeg_fpzcz,
                     eeg_pzoz: result[0].eeg_pzoz,
                     eeg_fpzcz_grad: result[0].eeg_fpzcz_grad,
@@ -371,11 +383,11 @@ io.on('connection', (socket) =>
     });
 });
 
-const client = net.createConnection
-({port: 14564 }, () =>
-{
-  console.log('Client connected to the server.');
-});
+// const client = net.createConnection
+// ({port: 14564 }, () =>
+// {
+//   console.log('Client connected to the server.');
+// });
 
 http.listen(8080, () => {
     console.log('listening on *:8080');

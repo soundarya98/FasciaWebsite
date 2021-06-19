@@ -56,7 +56,8 @@ def nodeserv(transfdata, cn):
 
 def main():
     # 713
-    count = 500
+    count = 79
+
     count_json = {}
     count_json["data"]=count
 

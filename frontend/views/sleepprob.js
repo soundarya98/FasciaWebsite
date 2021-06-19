@@ -1,4 +1,4 @@
-function redraw_sleepprob(data, now) {
+function redraw_sleepprob(data, offset, now) {
     let tmpdate = new Date(now);
     let hours = tmpdate.getHours();
     if(hours < 10)
@@ -18,7 +18,7 @@ function redraw_sleepprob(data, now) {
 
 
     let time = hours + ":" + minutes + ":" + seconds;
-    document.getElementById('time').innerHTML = time;
+    document.getElementById('time').innerHTML = offset;
 // set the dimensions and margins of the graph
 //   var margin = {top: 20, right: 20, bottom: 30, left: 40},
 //     width = clientWidth - margin.left - margin.right,

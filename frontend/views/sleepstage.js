@@ -1,7 +1,7 @@
-function sleepstage() {
+function sleepstage(clientWidth) {
   function realTimeLineChart() {
 var margin = {top: 20, right: 20, bottom: 20, left: 50},
- width = 1200,
+ width = clientWidth,
  height = 100,
  duration = 500,
  color = d3.schemeCategory10;
@@ -56,7 +56,7 @@ var area = d3.area()
        .attr("class", "data");
  var legendEnter = gEnter.append("g")
    .attr("class", "legend")
-   .attr("transform", "translate(" + (width-margin.right-margin.left-75-100) + ",10)");
+   .attr("transform", "translate(" + (width-margin.right-margin.left-75-100) + ",-10)");
  // legendEnter.append("rect")
  //   .attr("width", 50)
  //   .attr("height", 75)
@@ -232,6 +232,7 @@ socket.on('SleepStage', function (fulldata) {
        var now = new Date();
      var numbers = [0, 1, 2, 3, 4, 5];
      var firststage = numbers.map(firstColor)
+
      function firstColor(num) {
        if(num==fulldata.stage.stage) {
          return 0;
@@ -268,6 +269,8 @@ socket.on('SleepStage', function (fulldata) {
          return NaN
        }
      }
+     // console.log(fulldata.stage.stage)
+     //   console.log(fulldata.st)
      if(fulldata.stage.stage != previousstage && justFirst == false) {
        var newstage = numberssleep.map(newstageColor);
        function newstageColor(num) {

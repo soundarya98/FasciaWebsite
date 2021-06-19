@@ -135,7 +135,6 @@ function redraw_eeg(data, channel, clientWidth, clientHeight, slowWave, spindle,
         .attr("fill", "#000")
         .text(channel);
 
-
     // Create a <g> element for each row
     var row = g.selectAll(".row")
         .data(rows)
@@ -194,7 +193,6 @@ function redraw_signal(data, channel, clientWidth, clientHeight, slowWave, spind
 
     svg.attr("width", width)
         .attr("height", height);
-
 
     // SVG G to provide D3 Margin Convention
     g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");

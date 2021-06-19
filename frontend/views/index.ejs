@@ -66,9 +66,10 @@
 
 
 
-let myVar, saliency = true, spindle = true, slowWave = true, offset = 600;
+let myVar, saliency = true, spindle = true, slowWave = true, offset = 601;
 
 function getNext(){
+    debugger
     offset++ ;
     socket.emit("Change", {offset:offset});
 }
@@ -216,31 +217,36 @@ $(document).ready(function(){
 <!--  <a href="#">User</a>-->
 </div>
 <!-- Adding next and prev button -->
-
+<div id="optionstonavigate">
 <div id="getdata"> 
     <button id="pause" class="button" ><i class="fa fa-pause"></i></button>
     <button id="play" class="button" ><i class="fa fa-play"></i></button>
     <button id="prev" class="button" ><i class="fa fa-backward"></i></button>
     <button id="next" class="button" ><i class="fa fa-forward"></i></button>
-    <p id="info">Response will change every 30s. Press Pause to stop.</p>
+</div>
+<div id="checkboxes">
+    <label for="saliency">Saliency</label> <div style="background-color: #DE0098; display:inline; width: 4px; ">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+    <input type="checkbox" id="saliency" name="saliency"
+         checked>
+
+    <label for="slowwave">Slow Waves</label> <div style="background-color: #00FFFF; display:inline; width: 4px; ">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+    <input type="checkbox" id="slowwave" name="slowwave"
+         checked>
+
+    <label for="spindle">Spindles</label> <div style="background-color: #ff7f0e; display:inline; width: 4px; ">&nbsp;&nbsp;&nbsp;&nbsp;</div>
+    <input type="checkbox" id="spindle" name="spindle"
+         checked>
 </div>
 <div id="getdataposition" style="display:inline;">
     <input type="number" step="1" min="601" max="1000" />
     <button id="go" class="button"  >Go!</button>
 </div>
-<div id="checkboxes"> 
-    <label for="saliency">Saliency</label> <div style="background-color: #DE0098; display:inline; width: 4px; ">&nbsp;&nbsp;&nbsp;&nbsp;</div>
-    <input type="checkbox" id="saliency" name="saliency"
-         checked>
-    
-    <label for="slowwave">Slow Waves</label> <div style="background-color: #00FFFF; display:inline; width: 4px; ">&nbsp;&nbsp;&nbsp;&nbsp;</div>
-    <input type="checkbox" id="slowwave" name="slowwave"
-         checked>
-    
-    <label for="spindle">Spindles</label> <div style="background-color: #ff7f0e; display:inline; width: 4px; ">&nbsp;&nbsp;&nbsp;&nbsp;</div>
-    <input type="checkbox" id="spindle" name="spindle"
-         checked>
-    
+</div>
+<div id="texttodisplay">
+<p id="info">Response will change every 30s. Press Pause to stop.</p>
+<p id="epoch" style="display:inline;">
+   Epoch is 600
+</p>
 </div>
 <div class="row">
   <div class="leftcolumn">
@@ -339,7 +345,7 @@ $(document).ready(function(){
 
       <div class="card">
           <h1>Spectrogram</h1>
-          <img id="spectrogram" alt="Spectrogram" style="width: 1170px">
+          <img id="spectrogram" alt="Spectrogram">
       </div>
 
       <div class="card">
@@ -350,7 +356,7 @@ $(document).ready(function(){
 
   <div class="rightcolumn">
       <div class="card">
-          <h1>Sleep Stage Probabilities of time: <p id="time"> </p> </h1>
+          <h1>Sleep Stage Probabilities of epoch: <p id="time"> </p> </h1>
           <div id="SleepProb"></div>
       </div>
     <div class="card">
@@ -431,27 +437,36 @@ $(document).ready(function(){
 <script src="signals.js"></script>
 <script src="psd.js"></script>
 <script>
-    var clientWidth = 1200;
-    var clientHeight = 100;
-    sleepstage();
-    socket.on('SleepStage', function (fulldata) {
+    let fulldata ;
+    socket.on('SleepStage', function (fullData) {
+	fulldata = fullData;
+	redraw_graphs();
+    });
+
+function redraw_graphs(){
+	const elem = document.querySelector('#EEG-FPZ-CZ');
+        const rect = elem.getBoundingClientRect();
+        var clientWidth = rect.width;
+        var clientHeight = 100;
+        sleepstage(clientWidth);
         redraw_psd(fulldata.psd_fpzcz, 'EEG-FPZ-CZ');
         redraw_psd(fulldata.psd_pzoz, 'EEG-PZ-OZ');
+        $("#spectrogram").css("width", `${clientWidth}px`);
 
         let ms = 1000 * 60 * 0.5; // convert minutes to ms
         let now = new Date();
         now = Math.round(now.getTime() / ms) * ms;
-        redraw_sleepprob(fulldata.sleepprob, now);
+        redraw_sleepprob(fulldata.sleepprob, offset, now);
         redraw_eeg(fulldata.eeg_fpzcz, 'EEG-FPZ-CZ', clientWidth, clientHeight, slowWave, spindle, saliency, now);
         redraw_eeg(fulldata.eeg_pzoz, 'EEG-PZ-OZ', clientWidth, clientHeight, slowWave, spindle, saliency, now);
-        
+
         // redraw_grad(fulldata.eeg_fpzcz_grad,'EEG-FPZ-CZ', clientWidth, clientHeight, saliency);
         // redraw_grad(fulldata.eeg_pzoz_grad,'EEG-PZ-OZ', clientWidth, clientHeight, saliency);
         // redraw_grad(fulldata.eog_grad, 'EOG', clientWidth, clientHeight, saliency);
         // redraw_grad(fulldata.resp_grad,'Resp-Oro-Nasal',  clientWidth, clientHeight, saliency);
         // redraw_grad(fulldata.emg_grad, 'EMG', clientWidth, clientHeight, saliency);
         // redraw_grad(fulldata.temp_grad, 'Temp', clientWidth, clientHeight, saliency);
-        
+
         redraw_signal(fulldata.eog, 'EOG', clientWidth, clientHeight, slowWave, spindle, saliency, now);
         redraw_signal(fulldata.emg, 'EMG', clientWidth, clientHeight, slowWave, spindle, saliency, now);
         redraw_signal(fulldata.resp, 'Resp-Oro-Nasal', clientWidth, clientHeight, slowWave, spindle, saliency, now);
@@ -459,10 +474,11 @@ $(document).ready(function(){
         redraw_fft(fulldata.fft_fpzcz, 'EEG-FPZ-CZ');
         redraw_fft(fulldata.fft_pzoz, 'EEG-PZ-OZ');
         d = new Date();
-
+        $("#epoch").html('Epoch is ' + fulldata.epoch);
         $("#spectrogram").attr("src", "eeg_fpzcz_specgram.png?"+d.getTime());
-    });
-    
+}
+window.addEventListener("resize", redraw_graphs);
+
 </script>
 </body>
 </html>
